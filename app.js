@@ -94,6 +94,30 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     {id:'N50xlk-EgU4',title:'Peregangan Statis di Tempat Kerja',category:'utama',desc:'Puskesmas Goranggareng Taji • Gerakan peregangan statis',length:'Ikuti sesuai video'},
     {id:'NkOl3371PL0',title:'Senam Peregangan untuk Pemula',category:'utama',desc:'SKWAD Fitness • Peregangan ringan untuk pemula dan sesudah duduk lama',length:'5 menit'}
   ];
+  // Tautan pilihan pengelola Puskesmas, dibagikan ke semua perangkat lewat situs.
+  // Judul dan durasi belum diverifikasi, jadi ditampilkan sebagai nomor pilihan.
+  // Tidak ada video YouTube yang disalin atau di-host ulang.
+  const SHARED_USER_VIDEOS = [
+    {id:'3hKBZ_I3Dws',title:'Video Pilihan 01',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'f5N4VozNGvA',title:'Video Pilihan 02',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'LHDS3vOvWPg',title:'Video Pilihan 03',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'2f543yuRrVg',title:'Video Pilihan 04',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'Ww5vCKkcfSc',title:'Video Pilihan 05',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'xjeiUBfYRmA',title:'Video Pilihan 06',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'WZwrJGJP5wA',title:'Video Pilihan 07',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'LYx8mxXpkJg',title:'Video Pilihan 08',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'P99Q7OMTusk',title:'Video Pilihan 09',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'ftJwd9c20_A',title:'Video Pilihan 10',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'xupCaUkhCPA',title:'Video Pilihan 11',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'Wn12YAi-THU',title:'Video Pilihan 12',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'7pEjcBAfcvs',title:'Video Pilihan 13',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'ggg3yTNqaG0',title:'Video Pilihan 14',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'cSP48Syciy8',title:'Video Pilihan 15',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'TwRSVTvK7mY',title:'Video Pilihan 16',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'cp7e07aWs5s',title:'Video Pilihan 17',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'FzLH3jzvIqo',title:'Video Pilihan 18',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
+    {id:'CFpm4vGtMOY',title:'Video Pilihan 19',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'}
+  ];
   const SCHEDULE = [
     {time:'07:00',title:'Pemanasan sebelum bekerja',duration:'3 menit',icon:'☀'},
     {time:'08:30',title:'Peregangan leher dan bahu',duration:'3 menit',icon:'◌'},
@@ -114,7 +138,7 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   let toastTimer;
   const save = () => {try {localStorage.setItem(STORAGE,JSON.stringify(state));} catch {notify('Penyimpanan browser penuh atau diblokir.');}};
   const getEmployees = () => state.employees.length ? state.employees : PEGAWAI_2026;
-  const getVideos = () => [...DEFAULT_VIDEOS, ...state.videos];
+  const getVideos = () => [...DEFAULT_VIDEOS, ...SHARED_USER_VIDEOS, ...state.videos];
   const getUser = () => getEmployees().find(p=>p.id===state.userId) || null;
   const localParts = () => {
     const parts = new Intl.DateTimeFormat('en-GB',{timeZone:ZONE,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
@@ -175,10 +199,10 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     $('featured-video').innerHTML=`<div class="thumb"><img src="${videoThumb(v.id)}" alt="Cuplikan video ${safe(v.title)}" loading="lazy"><span class="thumb-play">▶</span></div><div><span class="pill">Senam utama</span><h3>${safe(v.title)}</h3><p>${safe(v.desc)}</p><p>Durasi: ${safe(v.length||'Sesuai video')}</p><button class="primary" data-play="${v.id}">▶ Putar senam sekarang</button></div>`;
   }
   function renderVideos(){
-    const videos=videoFilter==='saya'?state.videos:getVideos().filter(v=>videoFilter==='semua'||v.category===videoFilter);
+    const videos=videoFilter==='saya'?[...SHARED_USER_VIDEOS,...state.videos]:getVideos().filter(v=>videoFilter==='semua'||v.category===videoFilter);
     const output=$('videos-list');
-    if(!videos.length){output.innerHTML='<div class="empty-state">Belum ada video untuk kategori ini. Anda bisa menambahkan video di halaman Pengaturan.</div>';return;}
-    output.innerHTML=videos.map(v=>`<article class="video-card"><div class="thumb"><img src="${videoThumb(v.id)}" alt="Cuplikan video ${safe(v.title)}" loading="lazy"><span class="thumb-play">▶</span></div><div class="video-card-body"><span class="pill">${v.category==='utama'?'Senam utama':'Senam hiburan'}</span><h3>${safe(v.title)}</h3><p>${safe(v.desc)}${v.length?' • '+safe(v.length):''}</p><button class="primary" data-play="${v.id}">▶ Putar di aplikasi</button></div></article>`).join('');
+    if(!videos.length){output.innerHTML='<div class="empty-state">Belum ada video pada kategori ini. Tambahkan melalui Pengaturan.</div>';return;}
+    output.innerHTML=videos.map(v=>`<article class="video-card"><div class="thumb"><img src="${videoThumb(v.id)}" alt="Cuplikan video ${safe(v.title)}" loading="lazy"><span class="thumb-play">▶</span></div><div class="video-card-body"><span class="pill">${v.category==='utama'?'Senam utama':v.category==='hiburan'?'Senam hiburan':'Video Saya'}</span><h3>${safe(v.title)}</h3><p>${safe(v.desc)}${v.length?' • '+safe(v.length):''}</p><button class="primary" data-play="${v.id}">▶ Putar di aplikasi</button></div></article>`).join('');
   }
   function renderSchedule(){
     const {time}=localParts();
@@ -211,6 +235,8 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     iframe.referrerPolicy='strict-origin-when-cross-origin';
     iframe.allowFullscreen=true;
     $('video-frame').replaceChildren(iframe);
+    const backup=$('player-fallback-link');
+    if(backup)backup.href='https://www.youtube.com/watch?v='+encodeURIComponent(id);
     $('player-dialog').showModal();
   }
   function closePlayer(){$('player-dialog').close();$('video-frame').replaceChildren();currentVideo=null;}
