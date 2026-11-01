@@ -147,3 +147,24 @@
 /* Video pilihan pengguna */
 .chip-row{flex-wrap:wrap}
 @media(max-width:500px){.chip-row{gap:7px}.chip{padding:8px 12px;font-size:12px}}
+
+/* Pemutar senam langsung di aplikasi (dua mode YouTube). */
+.player-embed-tools {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px 14px;
+  margin:12px 0 8px;
+}
+.player-embed-status {margin:0;color:var(--muted);font-size:12px;flex:1 1 240px}
+.player-mode-buttons {display:flex;flex-wrap:wrap;gap:6px}
+.player-mode-button {border:1px solid #cbdcdb;border-radius:9px;background:#fff;color:#0b575b;font-size:12px;font-weight:700;padding:8px 11px;cursor:pointer}
+.player-mode-button.active {background:#dff2ec;border-color:#81cbb6;color:#075d50}
+.player-mode-button:focus-visible {outline:3px solid #82d3bf;outline-offset:2px}
+.player-outbound-note{margin:8px 0 12px;color:#708a8f}
+@media(max-width:550px){
+  .player-dialog {padding:14px}
+  .player-mode-buttons {width:100%}
+  .player-mode-button {flex:1;padding:9px 6px}
+}
