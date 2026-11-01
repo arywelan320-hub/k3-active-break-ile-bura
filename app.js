@@ -362,6 +362,9 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     text('reward-tip',SUCCESS_TIPS[session]);
     text('reward-context',ended?'Video sudah selesai. Apakah Anda ikut melakukan gerakannya?':'Konfirmasi mandiri: apakah Anda mengikuti gerakan senam?');
     text('reward-score',already?'Poin sesi ini sudah tercatat':'Konfirmasi gerakan: +10 poin lokal');
+    const todaySessions=new Set(state.history.filter(x=>x.userId===state.userId&&x.date===date&&x.participated===true&&SCHEDULE.some(s=>s.time===x.session)).map(x=>x.session));
+    text('reward-progress','Kemajuan hari ini: '+todaySessions.size+' dari 3 sesi');
+    $('reward-progress-bar').style.width=(todaySessions.size/3*100)+'%';
     $('reward-participated').disabled=already;
     $('reward-participated').textContent=already?'Sudah tercatat hari ini':'Ya, saya ikut bergerak';
     $('player-dialog').close();
