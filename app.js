@@ -78,7 +78,8 @@ Operator Layanan|Mikael Gerardus I. F. Riberu
 Operator Layanan|Lidia Gete Kwure
 Administrasi|Getrudis Kilu Kwuta
 Administrasi|Selerina Dai Bte Simon Ola
-Dokter|dr. Lodvianes Subanraya Lewar`.split('\n').map((line,i)=>{
+Dokter|dr. Lodvianes Subanraya Lewar
+Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     const [profesi,nama]=line.split('|');
     return {id:'pegawai-2026-'+String(i+1).padStart(3,'0'),nama,profesi,unit:''};
   });
