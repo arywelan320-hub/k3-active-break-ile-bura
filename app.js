@@ -132,6 +132,9 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   if (!Array.isArray(state.videos)) state.videos=[];
   if (!Array.isArray(state.history)) state.history=[];
   let currentVideo = null;
+  let currentSession = null;
+  let currentPlayerMode = 'standard';
+  let youtubeWatch = {startedAt:0,watchedMs:0,completed:false,iframe:null};
   let alternativeSession = '09:00';
   let alternativeType = 'pilihan';
   let alternativePage = 0;
@@ -262,7 +265,7 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   }
   function renderHistory(){
     const data=state.history.filter(x=>x.userId===state.userId).slice().sort((a,b)=>b.at.localeCompare(a.at));
-    text('history-total',data.length);
+    text('history-total',data.filter(x=>x.participated!==false).length);
     text('history-days',new Set(data.map(x=>x.date)).size);
     $('history-list').innerHTML=data.length?data.map(x=>`<div class="history-item"><div class="history-icon">✓</div><div><strong>${safe(x.videoTitle)}</strong><span>${safe(x.date)} • ${safe(x.time)} WITA</span></div><span>Konfirmasi mandiri</span></div>`).join(''):'<div class="empty-state">Belum ada riwayat. Mulai video, lakukan gerakan sesuai kemampuan, lalu tekan “Saya sudah mengikuti senam”.</div>';
   }
@@ -286,6 +289,7 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     const host=mode==='private'?'www.youtube-nocookie.com':'www.youtube.com';
     const params=new URLSearchParams({rel:'0',playsinline:'1',origin:location.origin});
     const frame=document.createElement('iframe');
+    params.set('enablejsapi','1');
     frame.src='https://'+host+'/embed/'+encodeURIComponent(id)+'?'+params.toString();
     frame.title='Pemutar YouTube: '+currentVideo.title;
     frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
@@ -295,11 +299,16 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     const status=$('video-player-status');
     if(status)status.textContent='Memuat video di dalam aplikasi...';
     frame.addEventListener('load',()=>{
-      if(status&&frame.isConnected)status.textContent='Jika layar tetap hitam atau muncul pesan kesalahan, coba mode pemutar lainnya di bawah.';
+      if(frame.isConnected){
+        try{frame.contentWindow?.postMessage(JSON.stringify({event:'listening',id:1,channel:'widget'}),'*')}catch{}
+        if(status)status.textContent='Setelah video berakhir, apresiasi akan muncul. Bila tidak terdeteksi, gunakan konfirmasi manual.';
+      }
     });
     frame.addEventListener('error',()=>{
       if(status&&frame.isConnected)status.textContent='Pemutar tidak berhasil dimuat. Coba mode pemutar lainnya.';
     });
+    youtubeWatch.iframe=frame;
+    currentPlayerMode=mode;
     $('video-frame').replaceChildren(frame);
     $('player-mode-standard')?.classList.toggle('active',mode==='standard');
     $('player-mode-private')?.classList.toggle('active',mode==='private');
@@ -312,25 +321,102 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     currentVideo=v;
     text('player-title',v.title);
     text('player-description',v.desc);
+    const main=SCHEDULE.find(s=>s.videoId===id);
+    currentSession=main?.time||(location.hash==='#alternatif'?alternativeSession:null);
+    youtubeWatch={startedAt:0,watchedMs:0,completed:false,iframe:null};
     const backup=$('player-fallback-link');
     if(backup)backup.href='https://www.youtube.com/watch?v='+encodeURIComponent(id);
     $('player-dialog').showModal();
     setPlayerMode('standard');
   }
+
+  function stopWatchClock(){
+    if(youtubeWatch.startedAt){
+      youtubeWatch.watchedMs+=Date.now()-youtubeWatch.startedAt;
+      youtubeWatch.startedAt=0;
+    }
+  }
   function closePlayer(){
+    stopWatchClock();
     $('player-dialog').close();
     $('video-frame').replaceChildren();
     currentVideo=null;
+    currentSession=null;
   }
-  function saveActivity(){
+  const SUCCESS_TIPS={
+    '09:00':'Peregangan ringan dapat membantu mengurangi kekakuan setelah duduk atau berdiri lama.',
+    '11:00':'Jeda bergerak di tengah pekerjaan membantu mengubah posisi tubuh dan mengistirahatkan otot.',
+    '13:00':'Bergerak sejenak setelah siang dapat menjadi penyegar sebelum melanjutkan pelayanan.'
+  };
+  function getSession(){
+    return currentSession||SCHEDULE.find(s=>s.time===localParts().time)?.time||'09:00';
+  }
+  function showReward(ended){
     if(!currentVideo||!getUser())return;
-    const {date,time}=localParts();
-    const v=currentVideo;
-    const duplicate=state.history.some(x=>x.userId===state.userId&&x.date===date&&x.videoId===v.id&&x.time===time);
-    if(duplicate){notify('Kegiatan ini sudah tercatat pada menit yang sama.');return;}
-    state.history.push({userId:state.userId,employeeName:getUser().nama,profession:getUser().profesi,unit:getUser().unit,date,time,videoId:v.id,videoTitle:v.title,at:new Date().toISOString()});
-    save();closePlayer();renderHistory();updateClock();notify('Konfirmasi aktivitas berhasil dicatat di perangkat ini.');
+    stopWatchClock();
+    const session=getSession();
+    const {date}=localParts();
+    const already=state.history.some(x=>x.userId===state.userId&&x.date===date&&x.session===session&&x.participated===true);
+    text('reward-title',ended?'Video selesai, '+getUser().nama.split(' ')[0]+'!':'Terima kasih, '+getUser().nama.split(' ')[0]+'!');
+    text('reward-session',session+' WITA');
+    text('reward-tip',SUCCESS_TIPS[session]);
+    text('reward-context',ended?'Video sudah selesai. Apakah Anda ikut melakukan gerakannya?':'Konfirmasi mandiri: apakah Anda mengikuti gerakan senam?');
+    text('reward-score',already?'Poin sesi ini sudah tercatat':'Konfirmasi gerakan: +10 poin lokal');
+    $('reward-participated').disabled=already;
+    $('reward-participated').textContent=already?'Sudah tercatat hari ini':'Ya, saya ikut bergerak';
+    $('player-dialog').close();
+    $('video-frame').replaceChildren();
+    $('reward-dialog').showModal();
+    const confetti=$('reward-confetti');
+    confetti.replaceChildren();
+    if(!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
+      for(let i=0;i<28;i++){
+        const piece=document.createElement('i');
+        piece.className='reward-piece';
+        piece.style.left=(4+(i*37%93))+'%';
+        piece.style.animationDelay=(i%9*0.09)+'s';
+        piece.style.background=['#e5b653','#36a88b','#9edbd4','#e38b74'][i%4];
+        confetti.append(piece);
+      }
+    }
   }
+  function finishReward(participated){
+    const user=getUser(),v=currentVideo;
+    if(!user||!v)return;
+    const {date,time}=localParts(),session=getSession();
+    const duplicate=state.history.some(x=>x.userId===state.userId&&x.date===date&&x.session===session&&x.participated===true);
+    if(participated&&!duplicate){
+      state.history.push({userId:state.userId,employeeName:user.nama,profession:user.profesi,unit:user.unit,date,time,session,participated:true,points:10,videoId:v.id,videoTitle:v.title,at:new Date().toISOString()});
+      save();
+    }
+    $('reward-dialog').close();
+    $('reward-confetti').replaceChildren();
+    currentVideo=null;
+    currentSession=null;
+    youtubeWatch={startedAt:0,watchedMs:0,completed:false,iframe:null};
+    renderHistory();updateClock();
+    notify(participated?(duplicate?'Sesi ini sudah tercatat.':'Aktivitas tercatat: +10 poin lokal.'): 'Terima kasih sudah menonton. Tidak ada poin yang ditambahkan.');
+  }
+  // YouTube IFrame API mengirim pesan state. Hanya terima pesan dari iframe aktif.
+  window.addEventListener('message',event=>{
+    if(!currentVideo||!$('player-dialog').open)return;
+    if(!['https://www.youtube.com','https://www.youtube-nocookie.com'].includes(event.origin))return;
+    if(event.source!==youtubeWatch.iframe?.contentWindow)return;
+    let data=event.data;
+    if(typeof data==='string'){try{data=JSON.parse(data)}catch{return}}
+    if(!data||data.event!=='onStateChange')return;
+    const stateCode=Number(data.info);
+    if(stateCode===1){
+      if(!youtubeWatch.startedAt)youtubeWatch.startedAt=Date.now();
+    }else if(stateCode===2||stateCode===0||stateCode===-1){
+      stopWatchClock();
+    }
+    if(stateCode===0&&!youtubeWatch.completed){
+      youtubeWatch.completed=true;
+      // Peristiwa ended berasal dari YouTube, bukan tebakan berdasarkan timer.
+      showReward(true);
+    }
+  });
   // Browser-only reminder: notifications do not run when the tab or browser is fully closed.
 
   function checkReminder(){
@@ -422,8 +508,15 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   $('player-mode-private').addEventListener('click',()=>setPlayerMode('private'));
   $('close-player').addEventListener('click',closePlayer);
   $('close-player-2').addEventListener('click',closePlayer);
-  $('player-dialog').addEventListener('close',()=>{$('video-frame').replaceChildren();currentVideo=null;});
-  $('finish-video').addEventListener('click',saveActivity);
+  $('player-dialog').addEventListener('close',()=>{
+    stopWatchClock();
+    $('video-frame').replaceChildren();
+  });
+  $('reward-participated').addEventListener('click',()=>finishReward(true));
+  $('reward-watched').addEventListener('click',()=>finishReward(false));
+  $('reward-close').addEventListener('click',()=>finishReward(false));
+  $('reward-dialog').addEventListener('cancel',e=>{e.preventDefault();finishReward(false);});
+  $('finish-video').addEventListener('click',()=>showReward(false));
   // Alternatif ditampilkan pada halaman tersendiri, empat video per halaman.
   $('export-csv').addEventListener('click',exportHistory);
   $('notification-btn').addEventListener('click',async()=>{
