@@ -134,6 +134,8 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   let currentVideo = null;
   let currentSession = null;
   let currentPlayerMode = 'standard';
+  let motionUsed = false;
+  let lastMotionReport = null;
   let youtubeWatch = {startedAt:0,watchedMs:0,completed:false,iframe:null};
   let alternativeSession = '09:00';
   let alternativeType = 'pilihan';
@@ -315,10 +317,14 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     $('player-mode-standard')?.setAttribute('aria-pressed',String(mode==='standard'));
     $('player-mode-private')?.setAttribute('aria-pressed',String(mode==='private'));
   }
+
   function openPlayer(id){
     const v=getVideos().find(x=>x.id===id);
     if(!v)return;
+    window.K3Motion?.stop();
     currentVideo=v;
+    motionUsed=false;
+    lastMotionReport=null;
     text('player-title',v.title);
     text('player-description',v.desc);
     const main=SCHEDULE.find(s=>s.videoId===id);
@@ -326,10 +332,29 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     youtubeWatch={startedAt:0,watchedMs:0,completed:false,iframe:null};
     const backup=$('player-fallback-link');
     if(backup)backup.href='https://www.youtube.com/watch?v='+encodeURIComponent(id);
+    $('motion-choice-dialog').showModal();
+  }
+  async function beginVideo(withCamera){
+    if(!currentVideo)return;
+    $('motion-choice-dialog').close();
     $('player-dialog').showModal();
     setPlayerMode('standard');
+    if(withCamera){
+      motionUsed=true;
+      const started=await window.K3Motion?.start();
+      if(!started&&currentVideo&&$('player-dialog').open){
+        notify('Deteksi tidak tersedia atau izin ditolak. Video tetap bisa ditonton tanpa kamera.');
+      }
+    }else{
+      motionUsed=false;
+      window.K3Motion?.stop();
+    }
   }
-
+  function cancelVideoChoice(){
+    $('motion-choice-dialog').close();
+    currentVideo=null;currentSession=null;
+    window.K3Motion?.stop();
+  }
   function stopWatchClock(){
     if(youtubeWatch.startedAt){
       youtubeWatch.watchedMs+=Date.now()-youtubeWatch.startedAt;
@@ -337,6 +362,8 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     }
   }
   function closePlayer(){
+    lastMotionReport=window.K3Motion?.summary()||null;
+    window.K3Motion?.stop();
     stopWatchClock();
     $('player-dialog').close();
     $('video-frame').replaceChildren();
@@ -354,6 +381,15 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   function showReward(ended){
     if(!currentVideo||!getUser())return;
     stopWatchClock();
+    lastMotionReport=motionUsed?(window.K3Motion?.summary()||null):null;
+    window.K3Motion?.stop();
+    const note=$('reward-motion-report');
+    if(note){
+      note.classList.toggle('hidden',!motionUsed);
+      note.textContent=!motionUsed?'':(lastMotionReport?.samples
+        ? 'Deteksi kamera (perkiraan): '+lastMotionReport.status+' • '+lastMotionReport.seconds+' detik gerakan. Tidak membuktikan gerakan benar.'
+        : 'Mode kamera dipilih, tetapi gerakan belum dapat dinilai. Tidak ada foto atau video yang disimpan.');
+    }
     const session=getSession();
     const {date}=localParts();
     const already=state.history.some(x=>x.userId===state.userId&&x.date===date&&x.session===session&&x.participated===true);
@@ -396,6 +432,7 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     $('reward-confetti').replaceChildren();
     currentVideo=null;
     currentSession=null;
+    motionUsed=false;lastMotionReport=null;
     youtubeWatch={startedAt:0,watchedMs:0,completed:false,iframe:null};
     renderHistory();updateClock();
     notify(participated?(duplicate?'Sesi ini sudah tercatat.':'Aktivitas tercatat: +10 poin lokal.'): 'Terima kasih sudah menonton. Tidak ada poin yang ditambahkan.');
@@ -490,7 +527,7 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   $('profession').addEventListener('change',updateEmployeeOptions);
   $('employee').addEventListener('change',()=>{$('login-btn').disabled=!$('employee').value;});
   $('login-btn').addEventListener('click',()=>{const id=$('employee').value;if(!getEmployees().some(x=>x.id===id))return;state.userId=id;save();showApp();});
-  $('change-user').addEventListener('click',()=>{state.userId=null;save();showApp();});
+  $('change-user').addEventListener('click',()=>{window.K3Motion?.stop();state.userId=null;save();showApp();});
 
   document.addEventListener('click',e=>{
     const play=e.target.closest('[data-play]');
@@ -509,9 +546,18 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   window.addEventListener('hashchange',()=>{if(getUser())navigate(location.hash.slice(1));});
   $('player-mode-standard').addEventListener('click',()=>setPlayerMode('standard'));
   $('player-mode-private').addEventListener('click',()=>setPlayerMode('private'));
+  $('motion-choose-normal').addEventListener('click',()=>beginVideo(false));
+  $('motion-choose-camera').addEventListener('click',()=>beginVideo(true));
+  $('motion-choose-cancel').addEventListener('click',cancelVideoChoice);
+  $('motion-choice-dialog').addEventListener('cancel',e=>{e.preventDefault();cancelVideoChoice();});
+  $('motion-stop-camera').addEventListener('click',()=>{
+    window.K3Motion?.stop();
+    notify('Kamera dimatikan. Senam dapat dilanjutkan tanpa deteksi.');
+  });
   $('close-player').addEventListener('click',closePlayer);
   $('close-player-2').addEventListener('click',closePlayer);
   $('player-dialog').addEventListener('close',()=>{
+    window.K3Motion?.stop();
     stopWatchClock();
     $('video-frame').replaceChildren();
   });
@@ -537,6 +583,7 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   });
   $('clear-local').addEventListener('click',()=>{
     if(!confirm('Hapus semua data pegawai impor, video tambahan, identitas, dan riwayat pada browser ini?'))return;
+    window.K3Motion?.stop();
     localStorage.removeItem(STORAGE);state={...initial};alternativeType='pilihan';alternativePage=0;showApp();notify('Data lokal berhasil dihapus.');
   });
   showApp();
