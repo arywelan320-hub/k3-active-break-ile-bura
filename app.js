@@ -3,16 +3,85 @@
   'use strict';
   const STORAGE = 'k3_ile_bura_v1';
   const ZONE = 'Asia/Makassar';
-  const DEMO_EMPLOYEES = [
-    {id:'demo-1',nama:'Pegawai Contoh 01',profesi:'Dokter',unit:'Poli Umum'},
-    {id:'demo-2',nama:'Pegawai Contoh 02',profesi:'Perawat',unit:'Rawat Jalan'},
-    {id:'demo-3',nama:'Pegawai Contoh 03',profesi:'Perawat',unit:'UGD'},
-    {id:'demo-4',nama:'Pegawai Contoh 04',profesi:'Bidan',unit:'KIA'},
-    {id:'demo-5',nama:'Pegawai Contoh 05',profesi:'Sanitarian',unit:'Kesehatan Lingkungan'},
-    {id:'demo-6',nama:'Pegawai Contoh 06',profesi:'Tenaga Gizi',unit:'Gizi'},
-    {id:'demo-7',nama:'Pegawai Contoh 07',profesi:'ATLM',unit:'Laboratorium'},
-    {id:'demo-8',nama:'Pegawai Contoh 08',profesi:'Administrasi',unit:'Tata Usaha'}
-  ];
+  /* Nama dan profesi dari Infografik Data Kepegawaian Puskesmas Ile Bura 2026.
+     Hanya nama & kategori profesi, tidak memuat NIP atau data pribadi lain.
+     Catatan: daftar ini tampil pada situs publik GitHub Pages. */
+  const PEGAWAI_2026 = `Perawat|Yohanes Noda Kwuta
+Perawat|Wilhelmus Feko Mare
+Perawat|Lodovika Hahu
+Perawat|Yohana Fransiska Salan Uran
+Perawat|Antonia Lete Hokeng
+Perawat|Wemi Efria Toulasik
+Perawat|Maria Ice Domaking
+Perawat|Yohana Jawa Wain
+Perawat|Hendrikus Hali Pehan
+Perawat|Timoteus Geu
+Perawat|Maria Imakulata Soge Nayan
+Perawat|Sesilia Ade Irma Mukin
+Perawat|Paulus Marianus S. Da Silva
+Perawat|Yustina Elisabeth Barek Ritan
+Perawat|Emiliana Halen Uran
+Perawat|Rosalia Agustina Makin
+Perawat|Dionisia Nini Ola Lamanepa
+Perawat|Maria Yosefina Mona Lewuk
+Perawat|Valentina Hore Witi
+Perawat|Siprianus Doma Leba
+Perawat|Donatus Lengo
+Bidan|Sesilia Serly Kebo
+Bidan|Mathildis Kedang
+Bidan|Maria Bali Blolon
+Bidan|Maria Imakulata Nogo Ritan
+Bidan|Yasinta Tristianty
+Bidan|Maria Yuvensia
+Bidan|Lusia Meylania Wain Boru
+Bidan|Soviana Virgonia A. Sonia Kleden
+Bidan|Fransiska Bispanti Nurak
+Bidan|Rosalinda Lete Puor
+Bidan|Maria Lelo Hurint
+Bidan|Marjorie Jane
+Bidan|Marselina Yohana Habu Namang
+Bidan|Veronika Berlindis Myro Liwu
+Bidan|Beatrix Seinhora Letek Kromen
+Bidan|Anastasia Rowan Darang
+Bidan|Maria Fatima Marsiana Penaten Ola
+Bidan|Mariana Susanty Tuto Wurin
+Bidan|Brigita Maria Redempta
+Bidan|Emirensiana Eda Ritan
+Bidan|Yuliana Barek Hoda
+Bidan|Serlina Jawa Mukin
+Bidan|Rosalia Jaja Weking
+Bidan|Maria Anjelina Lodan Lebao
+Bidan|Benedikta Roja Kwuta
+Bidan|Herlina Lering Kedang
+Bidan|Yosefina Dawan Uran
+Kefarmasian|Yuliana Bte Hendrik
+Kefarmasian|Maria Halmina Rume
+Kefarmasian|Adrianus Kopong Tadon
+Fisioterapis|Salvatrix Intan Apryani Ubas
+ATLM|Frederikus Domi Goo
+ATLM|Maria Petronela N. Nona Thalar
+ATLM|Yohanes Baptista Seri De Ornay
+Sanitarian|Hendrikus Helun Welan
+Sanitarian|Antonius Wao Blolon
+Promosi Kesehatan|Yosefina Ene Blolon
+Promosi Kesehatan|Marselina Lepan
+Promosi Kesehatan|Maria Magdalena Wunga Payong
+Epidemiolog|Klara Mona Bara
+Gizi|Maria Maru Wora
+Gizi|Elisabet Weka Leba
+Gizi|Margaretha Beatrix Rua
+Arsiparis|Elisabet Katarina Golan Wain
+Administrasi Kesehatan|Stefanus Tarabao Darang
+Administrasi Kesehatan|Yanuarius Meang Tupen
+Operator Layanan|Matheus Naya De Ornay
+Operator Layanan|Mikael Gerardus I. F. Riberu
+Operator Layanan|Lidia Gete Kwure
+Administrasi|Getrudis Kilu Kwuta
+Administrasi|Selerina Dai Bte Simon Ola
+Dokter|dr. Lodvianes Subanraya Lewar`.split('\n').map((line,i)=>{
+    const [profesi,nama]=line.split('|');
+    return {id:'pegawai-2026-'+String(i+1).padStart(3,'0'),nama,profesi,unit:''};
+  });
   const DEFAULT_VIDEOS = [
     {id:'vFLPkKmCCLU',title:'Panduan Gerakan Senam Peregangan',category:'utama',desc:'Panduan peregangan di tempat kerja • Kementerian PANRB',length:'±5 menit'},
     {id:'mNJKIkjAUjE',title:'Senam Peregangan di Tempat Kerja',category:'utama',desc:'Peregangan bersama • UPTD Puskesmas Sepinggan',length:'3–5 menit'},
@@ -37,7 +106,7 @@
   let videoFilter = 'semua';
   let toastTimer;
   const save = () => {try {localStorage.setItem(STORAGE,JSON.stringify(state));} catch {notify('Penyimpanan browser penuh atau diblokir.');}};
-  const getEmployees = () => state.employees.length ? state.employees : DEMO_EMPLOYEES;
+  const getEmployees = () => state.employees.length ? state.employees : PEGAWAI_2026;
   const getVideos = () => [...DEFAULT_VIDEOS, ...state.videos];
   const getUser = () => getEmployees().find(p=>p.id===state.userId) || null;
   const localParts = () => {
@@ -82,7 +151,7 @@
     text('greeting-detail',`${user.profesi}${user.unit?' • '+user.unit:''} | Tetap utamakan pelayanan pasien.`);
     text('today-date',formatDate());
     text('total-schedule',SCHEDULE.length);
-    text('employee-count',`${getEmployees().length} pegawai ${state.employees.length?'hasil impor':'contoh'} tersedia di perangkat ini.`);
+    text('employee-count',`${getEmployees().length} pegawai ${state.employees.length?'hasil impor':'data kepegawaian 2026'} tersedia di perangkat ini.`);
     renderFeatured();renderVideos();renderSchedule();renderHistory();updateClock();navigate(location.hash.slice(1)||'beranda');
   }
   function updateClock(){
