@@ -8,7 +8,7 @@
   <title>K3 Active Break | Puskesmas Ile Bura</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -41,17 +41,27 @@
           loading="eager"
         >
       </div>
-      <div class="login-card">
-        
-        <h2>Selamat datang!</h2>
-        <p>Pilih profesi dan nama untuk membuka jadwal senam hari ini.</p>
-        <label for="profession">1. Profesi pegawai</label>
-        <select id="profession"><option value="">Pilih profesi terlebih dahulu</option></select>
-        <label for="employee">2. Nama pegawai</label>
-        <select id="employee" disabled><option value="">Pilih profesi terlebih dahulu</option></select>
-        <button id="login-btn" class="primary full" disabled>Masuk ke aplikasi <span aria-hidden="true">→</span></button>
-        <p class="warning-note" id="demo-note">Mode contoh: daftar pegawai resmi belum dimasukkan. Nama yang tampil adalah data simulasi.</p>
-        <p class="tiny">Penggunaan aplikasi ini bersifat sukarela dan disesuaikan dengan kondisi pelayanan.</p>
+      <div class="login-card k3-entry-card">
+        <div class="entry-heading">
+          <span class="entry-eyebrow">IDENTITAS PEGAWAI</span>
+          <h2>Selamat datang</h2>
+          <p>Pilih profesi dan nama Anda untuk membuka kegiatan senam hari ini.</p>
+          <p class="entry-disclaimer">Senam singkat, disesuaikan dengan pelayanan pasien.</p>
+        </div>
+        <div class="entry-form">
+          <div class="entry-fields">
+            <div class="entry-field">
+              <label for="profession"><span class="step-number">1</span> Profesi pegawai</label>
+              <select id="profession"><option value="">Pilih profesi</option></select>
+            </div>
+            <div class="entry-field">
+              <label for="employee"><span class="step-number">2</span> Nama pegawai</label>
+              <select id="employee" disabled><option value="">Pilih profesi dahulu</option></select>
+            </div>
+          </div>
+          <button id="login-btn" class="primary full entry-button" disabled>Masuk ke aplikasi <span aria-hidden="true">→</span></button>
+          <p class="entry-demo" id="demo-note">Versi uji coba: daftar nama yang tersedia masih contoh. Data pegawai resmi belum dimasukkan.</p>
+        </div>
       </div>
     </section>
 
