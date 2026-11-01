@@ -9,7 +9,7 @@
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="style.css?v=2">
-  <script src="app.js?v=pegawai74-2026" defer></script>
+  <script src="app.js?v=senam-v2" defer></script>
 </head>
 <body>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -86,8 +86,8 @@
       </section>
 
       <section id="page-video" class="app-page hidden">
-        <div class="section-head heading-large"><div><span class="eyebrow">PERPUSTAKAAN SENAM</span><h2>Pilih gerakan favorit</h2><p>Video YouTube dimainkan dalam aplikasi bila penyematan diizinkan pemiliknya.</p></div></div>
-        <div class="chip-row"><button type="button" class="chip active" data-filter="semua">Semua</button><button type="button" class="chip" data-filter="utama">Senam utama</button><button type="button" class="chip" data-filter="hiburan">Senam hiburan</button></div>
+        <div class="section-head heading-large"><div><span class="eyebrow">PERPUSTAKAAN SENAM</span><h2>Pilih gerakan favorit</h2><p>Senam utama dari sumber tepercaya. Video dari Anda tersedia di tab Video Saya. Pemutaran tetap di aplikasi bila YouTube mengizinkan penyematan.</p></div></div>
+        <div class="chip-row"><button type="button" class="chip active" data-filter="semua">Semua</button><button type="button" class="chip" data-filter="utama">Senam utama</button><button type="button" class="chip" data-filter="hiburan">Senam hiburan</button><button type="button" class="chip" data-filter="saya">Video Saya</button></div>
         <div id="videos-list" class="videos-grid"></div>
       </section>
 
@@ -103,7 +103,7 @@
           <div class="panel"><h3>Pengingat saat aplikasi terbuka</h3><p>Izin notifikasi diperlukan. Pengingat ini belum bisa dijamin berjalan ketika aplikasi ditutup.</p><button id="notification-btn" class="outline">Aktifkan notifikasi</button><p id="notification-status" class="tiny"></p></div>
           <div class="panel"><h3>QR Code aplikasi</h3><p>Setelah situs dipublikasikan, bagikan kode QR yang menuju alamat situs ini.</p><div class="qr-box"><img id="qr-image" alt="QR Code menuju aplikasi K3 Active Break" width="170" height="170" loading="lazy"><span id="qr-placeholder" class="tiny">QR tersedia ketika situs menggunakan alamat HTTPS.</span></div><button id="share-app" class="outline">Bagikan tautan</button></div>
           <div class="panel"><h3>Impor data pegawai (CSV)</h3><p>Kolom wajib: <code>nama,profesi,unit</code>. Data impor tersimpan lokal, <b>tidak otomatis tersedia di HP pegawai lain</b>. Jangan unggah daftar pegawai ke repositori publik.</p><label class="file-input" for="csv-input">Pilih file CSV</label><input id="csv-input" type="file" accept=".csv,text/csv" hidden><p class="tiny" id="employee-count"></p><a class="file-link" href="template_pegawai.csv" download>Unduh contoh format CSV</a></div>
-          <div class="panel"><h3>Tambahkan video dari YouTube</h3><p>Tautan yang ditambahkan di sini hanya muncul di perangkat ini sampai sistem admin terpusat dibuat.</p><form id="video-form"><label for="video-name">Judul video</label><input id="video-name" type="text" maxlength="100" placeholder="Contoh: Senam ceria 5 menit" required><label for="video-url">Tautan video</label><input id="video-url" type="url" placeholder="https://www.youtube.com/watch?v=..." required><label for="video-category">Kategori</label><select id="video-category"><option value="utama">Senam utama</option><option value="hiburan">Senam hiburan</option></select><button class="primary full" type="submit">Tambahkan video</button></form></div>
+          <div class="panel"><h3>Tambahkan Video Saya</h3><p>Tempel tautan YouTube pilihan Anda. Video akan tampil di tab <b>Video Saya</b> dan kategori Senam Utama atau Senam Hiburan. Saat ini video tambahan hanya tersimpan di perangkat ini, belum otomatis terlihat oleh pegawai lain.</p><form id="video-form"><label for="video-name">Judul video</label><input id="video-name" type="text" maxlength="100" placeholder="Contoh: Senam ceria 5 menit" required><label for="video-url">Tautan video</label><input id="video-url" type="url" placeholder="https://www.youtube.com/watch?v=..." required><label for="video-category">Kategori</label><select id="video-category"><option value="utama">Senam utama</option><option value="hiburan">Senam hiburan</option></select><button class="primary full" type="submit">Tambahkan video</button></form></div>
         </div>
         <div class="danger-zone"><h3>Data tersimpan di perangkat ini</h3><p>Menghapus data akan menghilangkan riwayat lokal dan daftar pegawai/video yang pernah diimpor.</p><button id="clear-local" class="danger-button">Hapus data lokal</button></div>
       </section>
