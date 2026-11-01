@@ -37,3 +37,109 @@
         border-radius: 10px;
     }
 }
+
+/* Login pegawai ringkas • V2. Mengubah hanya halaman masuk. */
+.login-shell.k3-hero-layout {
+  gap: 16px;
+  padding: 18px 0 22px;
+}
+.k3-hero-layout .login-card.k3-entry-card {
+  width: 100%;
+  margin: 0;
+  padding: clamp(20px, 3.2vw, 32px);
+  display: grid;
+  grid-template-columns: minmax(220px, .75fr) minmax(0, 1.4fr);
+  align-items: center;
+  gap: clamp(20px, 3vw, 40px);
+  border: 1px solid #d8e9e6;
+  border-radius: 20px;
+  box-shadow: 0 12px 36px rgba(19, 81, 79, .065);
+}
+.k3-entry-card .entry-eyebrow {
+  color: #07816d;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+.k3-entry-card .entry-heading h2 {
+  margin: 5px 0 8px;
+  font-size: clamp(24px, 2.7vw, 31px);
+  line-height: 1.18;
+}
+.k3-entry-card .entry-heading p {
+  color: #617c80;
+  font-size: 14px;
+  margin: 0;
+  max-width: 360px;
+}
+.k3-entry-card .entry-heading .entry-disclaimer {
+  font-size: 12px;
+  margin-top: 12px;
+  color: #7c9799;
+}
+.k3-entry-card .entry-fields {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0, 1fr));
+  gap: 14px;
+}
+.k3-entry-card .entry-field { min-width: 0; }
+.k3-entry-card .entry-field label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 9px;
+  font-size: 13px;
+  font-weight: 750;
+}
+.k3-entry-card .step-number {
+  width: 23px;
+  height: 23px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 7px;
+  background: #e4f5ee;
+  color: #0a7566;
+  font-size: 12px;
+}
+.k3-entry-card select {
+  width: 100%;
+  min-width: 0;
+  min-height: 49px;
+  padding: 11px 12px;
+  border-radius: 11px;
+  background: #fbfefd;
+}
+.k3-entry-card .entry-button {
+  margin: 15px 0 0;
+  min-height: 49px;
+  padding: 12px 17px;
+  border-radius: 11px;
+  background: #08766b;
+  color: white;
+}
+.k3-entry-card .entry-button:disabled {
+  opacity: .55;
+  background: #7da6a4;
+}
+.k3-entry-card .entry-demo {
+  margin: 10px 0 0;
+  color: #738c8e;
+  font-size: 11px;
+  line-height: 1.45;
+}
+@media (max-width: 800px) {
+  .login-shell.k3-hero-layout { gap: 12px; padding: 12px 0 18px; }
+  .k3-hero-layout .login-card.k3-entry-card {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 21px;
+    border-radius: 17px;
+  }
+  .k3-entry-card .entry-heading h2 { font-size: 26px; }
+  .k3-entry-card .entry-heading .entry-disclaimer { margin-top: 7px; }
+}
+@media (max-width: 550px) {
+  .k3-entry-card .entry-fields { grid-template-columns: 1fr; gap: 15px; }
+  .k3-entry-card select { font-size: 16px; }
+  .k3-entry-card .entry-button { margin-top: 18px; }
+}
