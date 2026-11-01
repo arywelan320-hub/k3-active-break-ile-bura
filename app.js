@@ -83,10 +83,16 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     const [profesi,nama]=line.split('|');
     return {id:'pegawai-2026-'+String(i+1).padStart(3,'0'),nama,profesi,unit:''};
   });
+  /* Pilihan utama: tautan diperiksa dari kanal/laman resmi atau hasil YouTube.
+     Video tetap di YouTube dan diputar melalui embed bila pemilik mengizinkan. */
   const DEFAULT_VIDEOS = [
-    {id:'vFLPkKmCCLU',title:'Panduan Gerakan Senam Peregangan',category:'utama',desc:'Panduan peregangan di tempat kerja • Kementerian PANRB',length:'±5 menit'},
-    {id:'mNJKIkjAUjE',title:'Senam Peregangan di Tempat Kerja',category:'utama',desc:'Peregangan bersama • UPTD Puskesmas Sepinggan',length:'3–5 menit'},
-    {id:'VQU2pgO0U3M',title:'Edukasi Peregangan di Tempat Kerja',category:'utama',desc:'Materi edukasi gerakan dan manfaat peregangan • Kementerian PANRB',length:'Video edukasi'}
+    {id:'vFLPkKmCCLU',title:'Panduan Gerakan Senam Peregangan',category:'utama',desc:'Kementerian PANRB • Panduan gerakan peregangan untuk pegawai di tempat kerja',length:'Sekitar 5 menit'},
+    {id:'7qK9d6zSVeM',title:'Video Peregangan di Tempat Kerja',category:'utama',desc:'Kementerian PANRB • Ikuti gerakan peregangan bersama saat jeda kerja',length:'Ikuti sesuai video'},
+    {id:'_-josZw_cpw',title:'Senam Peregangan RSCM',category:'utama',desc:'RSUPN Cipto Mangunkusumo • Gerakan peregangan di sela kesibukan',length:'Ikuti sesuai video'},
+    {id:'PeqWuQY-1CM',title:'Senam Peregangan Dinamis • Versi 1',category:'utama',desc:'Puskesmas Goranggareng Taji • Peregangan dinamis untuk variasi kegiatan',length:'Ikuti sesuai video'},
+    {id:'qwKO4fmptg0',title:'Senam Peregangan Dinamis • Versi 2',category:'utama',desc:'Puskesmas Goranggareng Taji • Alternatif gerakan dinamis',length:'Ikuti sesuai video'},
+    {id:'N50xlk-EgU4',title:'Peregangan Statis di Tempat Kerja',category:'utama',desc:'Puskesmas Goranggareng Taji • Gerakan peregangan statis',length:'Ikuti sesuai video'},
+    {id:'NkOl3371PL0',title:'Senam Peregangan untuk Pemula',category:'utama',desc:'SKWAD Fitness • Peregangan ringan untuk pemula dan sesudah duduk lama',length:'5 menit'}
   ];
   const SCHEDULE = [
     {time:'07:00',title:'Pemanasan sebelum bekerja',duration:'3 menit',icon:'☀'},
@@ -169,7 +175,7 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     $('featured-video').innerHTML=`<div class="thumb"><img src="${videoThumb(v.id)}" alt="Cuplikan video ${safe(v.title)}" loading="lazy"><span class="thumb-play">▶</span></div><div><span class="pill">Senam utama</span><h3>${safe(v.title)}</h3><p>${safe(v.desc)}</p><p>Durasi: ${safe(v.length||'Sesuai video')}</p><button class="primary" data-play="${v.id}">▶ Putar senam sekarang</button></div>`;
   }
   function renderVideos(){
-    const videos=getVideos().filter(v=>videoFilter==='semua'||v.category===videoFilter);
+    const videos=videoFilter==='saya'?state.videos:getVideos().filter(v=>videoFilter==='semua'||v.category===videoFilter);
     const output=$('videos-list');
     if(!videos.length){output.innerHTML='<div class="empty-state">Belum ada video untuk kategori ini. Anda bisa menambahkan video di halaman Pengaturan.</div>';return;}
     output.innerHTML=videos.map(v=>`<article class="video-card"><div class="thumb"><img src="${videoThumb(v.id)}" alt="Cuplikan video ${safe(v.title)}" loading="lazy"><span class="thumb-play">▶</span></div><div class="video-card-body"><span class="pill">${v.category==='utama'?'Senam utama':'Senam hiburan'}</span><h3>${safe(v.title)}</h3><p>${safe(v.desc)}${v.length?' • '+safe(v.length):''}</p><button class="primary" data-play="${v.id}">▶ Putar di aplikasi</button></div></article>`).join('');
