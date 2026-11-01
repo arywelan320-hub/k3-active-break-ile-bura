@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b575b">
+  <meta name="description" content="K3 Active Break: senam peregangan dan aktivitas kebugaran pegawai UPTD Puskesmas Ile Bura.">
+  <title>K3 Active Break | Puskesmas Ile Bura</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#beranda" aria-label="K3 Active Break - beranda">
+        <span class="brand-icon" aria-hidden="true">✦</span>
+        <span><strong>K3 ACTIVE BREAK</strong><small>UPTD Puskesmas Ile Bura</small></span>
+      </a>
+      <div class="header-actions">
+        <span id="wita-clock" class="clock" title="Waktu Indonesia Tengah">--:-- WITA</span>
+        <button id="change-user" class="outline small hidden" type="button">Ganti pegawai</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="login-screen" class="login-shell">
+      <div class="login-intro">
+        <span class="eyebrow"><span class="pulse-dot"></span> GERAK SEJENAK • KERJA LEBIH SEHAT</span>
+        <h1>Lebih bugar di sela <em>jam pelayanan.</em></h1>
+        <p>Senam singkat, peregangan, dan aktivitas menyenangkan untuk pegawai Puskesmas Ile Bura.</p>
+        <div class="login-illustration" aria-hidden="true"><div class="exercise-person"><div class="head"></div><div class="body"></div><div class="arm left"></div><div class="arm right"></div><div class="leg left"></div><div class="leg right"></div></div><div class="float-label">5 MENIT<br><small>BERGERAK</small></div></div>
+        <div class="tip-line">Tidak perlu mengetik nama setiap kali masuk.</div>
+      </div>
+      <div class="login-card">
+        <span class="form-kicker">MULAI AKTIVITAS</span>
+        <h2>Selamat datang!</h2>
+        <p>Pilih profesi dan nama untuk membuka jadwal senam hari ini.</p>
+        <label for="profession">1. Profesi pegawai</label>
+        <select id="profession"><option value="">Pilih profesi terlebih dahulu</option></select>
+        <label for="employee">2. Nama pegawai</label>
+        <select id="employee" disabled><option value="">Pilih profesi terlebih dahulu</option></select>
+        <button id="login-btn" class="primary full" disabled>Masuk ke aplikasi <span aria-hidden="true">→</span></button>
+        <p class="warning-note" id="demo-note">Mode contoh: daftar pegawai resmi belum dimasukkan. Nama yang tampil adalah data simulasi.</p>
+        <p class="tiny">Penggunaan aplikasi ini bersifat sukarela dan disesuaikan dengan kondisi pelayanan.</p>
+      </div>
+    </section>
+
+    <section id="app-screen" class="hidden">
+      <div class="top-summary">
+        <div><span class="eyebrow">AKTIVITAS KEBUGARAN PEGAWAI</span><h1>Halo, <span id="greeting-name">Pegawai</span> <span aria-hidden="true">👋</span></h1><p id="greeting-detail">Selamat beraktivitas hari ini.</p></div>
+        <div class="date-chip" id="today-date">--</div>
+      </div>
+      <div id="local-banner" class="info-banner">Versi awal: data identitas dan riwayat tersimpan hanya di browser perangkat ini, belum tersinkron ke Google Sheets.</div>
+
+      <section id="page-beranda" class="app-page">
+        <div class="metric-grid">
+          <article class="metric-card green"><span class="mini-label">JADWAL BERIKUTNYA</span><strong id="next-time">--:--</strong><span id="next-title">Memeriksa jadwal...</span></article>
+          <article class="metric-card light"><span class="mini-label">AKTIVITAS HARI INI</span><strong id="today-count">0</strong><span>Konfirmasi selesai</span></article>
+          <article class="metric-card light"><span class="mini-label">TOTAL JADWAL</span><strong id="total-schedule">6</strong><span>Sesi per hari kerja</span></article>
+        </div>
+        <div class="section-head"><div><span class="eyebrow">PILIHAN HARI INI</span><h2>Video senam utama</h2></div><button class="text-button" data-go="video">Lihat semua →</button></div>
+        <div id="featured-video" class="featured-video"></div>
+        <div class="section-head"><div><span class="eyebrow">JADWAL RUTIN</span><h2>Waktu bergerak</h2></div><span class="muted">WITA</span></div>
+        <div id="schedule-list" class="schedule-list"></div>
+        <p class="footnote">Jadwal adalah rancangan internal, bukan ketentuan wajib. Dahulukan pelayanan pasien, kondisi fisik, dan keselamatan kerja.</p>
+      </section>
+
+      <section id="page-video" class="app-page hidden">
+        <div class="section-head heading-large"><div><span class="eyebrow">PERPUSTAKAAN SENAM</span><h2>Pilih gerakan favorit</h2><p>Video YouTube dimainkan dalam aplikasi bila penyematan diizinkan pemiliknya.</p></div></div>
+        <div class="chip-row"><button type="button" class="chip active" data-filter="semua">Semua</button><button type="button" class="chip" data-filter="utama">Senam utama</button><button type="button" class="chip" data-filter="hiburan">Senam hiburan</button></div>
+        <div id="videos-list" class="videos-grid"></div>
+      </section>
+
+      <section id="page-riwayat" class="app-page hidden">
+        <div class="section-head heading-large"><div><span class="eyebrow">CATATAN PRIBADI</span><h2>Riwayat aktivitas</h2><p>Catatan berasal dari konfirmasi Anda sendiri dan belum dianggap absensi resmi.</p></div><button id="export-csv" class="outline">Ekspor CSV</button></div>
+        <div class="metric-grid two"><article class="metric-card light"><span class="mini-label">TOTAL KONFIRMASI</span><strong id="history-total">0</strong><span>Di perangkat ini</span></article><article class="metric-card light"><span class="mini-label">HARI AKTIF</span><strong id="history-days">0</strong><span>Hari berbeda</span></article></div>
+        <div id="history-list" class="history-list"></div>
+      </section>
+
+      <section id="page-pengaturan" class="app-page hidden">
+        <div class="section-head heading-large"><div><span class="eyebrow">PENGATURAN VERSI AWAL</span><h2>Kelola aplikasi</h2><p>Pengaturan pada halaman ini hanya berlaku di browser perangkat yang digunakan.</p></div></div>
+        <div class="settings-grid">
+          <div class="panel"><h3>Pengingat saat aplikasi terbuka</h3><p>Izin notifikasi diperlukan. Pengingat ini belum bisa dijamin berjalan ketika aplikasi ditutup.</p><button id="notification-btn" class="outline">Aktifkan notifikasi</button><p id="notification-status" class="tiny"></p></div>
+          <div class="panel"><h3>QR Code aplikasi</h3><p>Setelah situs dipublikasikan, bagikan kode QR yang menuju alamat situs ini.</p><div class="qr-box"><img id="qr-image" alt="QR Code menuju aplikasi K3 Active Break" width="170" height="170" loading="lazy"><span id="qr-placeholder" class="tiny">QR tersedia ketika situs menggunakan alamat HTTPS.</span></div><button id="share-app" class="outline">Bagikan tautan</button></div>
+          <div class="panel"><h3>Impor data pegawai (CSV)</h3><p>Kolom wajib: <code>nama,profesi,unit</code>. Data impor tersimpan lokal, <b>tidak otomatis tersedia di HP pegawai lain</b>. Jangan unggah daftar pegawai ke repositori publik.</p><label class="file-input" for="csv-input">Pilih file CSV</label><input id="csv-input" type="file" accept=".csv,text/csv" hidden><p class="tiny" id="employee-count"></p><a class="file-link" href="template_pegawai.csv" download>Unduh contoh format CSV</a></div>
+          <div class="panel"><h3>Tambahkan video dari YouTube</h3><p>Tautan yang ditambahkan di sini hanya muncul di perangkat ini sampai sistem admin terpusat dibuat.</p><form id="video-form"><label for="video-name">Judul video</label><input id="video-name" type="text" maxlength="100" placeholder="Contoh: Senam ceria 5 menit" required><label for="video-url">Tautan video</label><input id="video-url" type="url" placeholder="https://www.youtube.com/watch?v=..." required><label for="video-category">Kategori</label><select id="video-category"><option value="utama">Senam utama</option><option value="hiburan">Senam hiburan</option></select><button class="primary full" type="submit">Tambahkan video</button></form></div>
+        </div>
+        <div class="danger-zone"><h3>Data tersimpan di perangkat ini</h3><p>Menghapus data akan menghilangkan riwayat lokal dan daftar pegawai/video yang pernah diimpor.</p><button id="clear-local" class="danger-button">Hapus data lokal</button></div>
+      </section>
+
+      <nav class="bottom-nav" aria-label="Menu aplikasi">
+        <button class="nav-item active" data-go="beranda"><span>⌂</span>Beranda</button>
+        <button class="nav-item" data-go="video"><span>▷</span>Video</button>
+        <button class="nav-item" data-go="riwayat"><span>▤</span>Riwayat</button>
+        <button class="nav-item" data-go="pengaturan"><span>⚙</span>Pengaturan</button>
+      </nav>
+    </section>
+  </main>
+
+  <dialog id="player-dialog" class="player-dialog">
+    <div class="player-dialog-head"><div><span class="eyebrow">WAKTU BERGERAK</span><h2 id="player-title">Video senam</h2></div><button class="icon-button" id="close-player" aria-label="Tutup video">✕</button></div>
+    <div id="video-frame" class="video-frame"></div>
+    <p id="player-description" class="muted"></p>
+    <div class="player-actions"><button id="finish-video" class="primary">Saya sudah mengikuti senam ✓</button><button id="close-player-2" class="outline">Tutup</button></div>
+    <p class="tiny">Tombol selesai adalah pernyataan mandiri. Menonton video tidak membuktikan seseorang mengikuti semua gerakan.</p>
+  </dialog>
+  <footer class="site-footer container">K3 Active Break • Rancangan kegiatan kebugaran pegawai • UPTD Puskesmas Ile Bura</footer>
+</body>
+</html>
