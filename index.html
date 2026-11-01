@@ -8,8 +8,8 @@
   <title>K3 Active Break | Puskesmas Ile Bura</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="style.css?v=pemutar-v3">
-  <script src="app.js?v=pemutar-v3" defer></script>
+  <link rel="stylesheet" href="style.css?v=3-sesi-k3-v1">
+  <script src="app.js?v=3-sesi-k3-v1" defer></script>
 </head>
 <body>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -72,23 +72,41 @@
       </div>
       <div id="local-banner" class="info-banner">Versi awal: data identitas dan riwayat tersimpan hanya di browser perangkat ini, belum tersinkron ke Google Sheets.</div>
 
+
       <section id="page-beranda" class="app-page">
         <div class="metric-grid">
           <article class="metric-card green"><span class="mini-label">JADWAL BERIKUTNYA</span><strong id="next-time">--:--</strong><span id="next-title">Memeriksa jadwal...</span></article>
           <article class="metric-card light"><span class="mini-label">AKTIVITAS HARI INI</span><strong id="today-count">0</strong><span>Konfirmasi selesai</span></article>
-          <article class="metric-card light"><span class="mini-label">TOTAL JADWAL</span><strong id="total-schedule">6</strong><span>Sesi per hari kerja</span></article>
+          <article class="metric-card light"><span class="mini-label">TOTAL JADWAL</span><strong id="total-schedule">3</strong><span>Sesi singkat per hari</span></article>
         </div>
-        <div class="section-head"><div><span class="eyebrow">PILIHAN HARI INI</span><h2>Video senam utama</h2></div><button class="text-button" data-go="video">Lihat semua →</button></div>
-        <div id="featured-video" class="featured-video"></div>
-        <div class="section-head"><div><span class="eyebrow">JADWAL RUTIN</span><h2>Waktu bergerak</h2></div><span class="muted">WITA</span></div>
-        <div id="schedule-list" class="schedule-list"></div>
-        <p class="footnote">Jadwal adalah rancangan internal, bukan ketentuan wajib. Dahulukan pelayanan pasien, kondisi fisik, dan keselamatan kerja.</p>
+        <div class="section-head"><div><span class="eyebrow">JADWAL K3 ACTIVE BREAK</span><h2>Tiga waktu bergerak</h2><p>Pilih video utama atau buka alternatif. Video tidak diputar otomatis.</p></div><span class="muted">WITA</span></div>
+        <div id="schedule-list" class="session-grid"></div>
+        <p class="footnote">Kegiatan bersifat sukarela. Jika sedang melayani pasien atau merasa tidak nyaman, sesi dapat dilewati. Catatan selesai merupakan konfirmasi mandiri, bukan absensi resmi.</p>
       </section>
 
       <section id="page-video" class="app-page hidden">
-        <div class="section-head heading-large"><div><span class="eyebrow">PERPUSTAKAAN SENAM</span><h2>Pilih gerakan favorit</h2><p>Senam utama dan 19 video pilihan pengelola. Buka tab Video Saya untuk melihat semua pilihan. Video diputar di aplikasi jika YouTube mengizinkan penyematan.</p></div></div>
-        <div class="chip-row"><button type="button" class="chip active" data-filter="semua">Semua</button><button type="button" class="chip" data-filter="utama">Senam utama</button><button type="button" class="chip" data-filter="hiburan">Senam hiburan</button><button type="button" class="chip" data-filter="saya">Video Saya</button></div>
-        <div id="videos-list" class="videos-grid"></div>
+        <div class="section-head heading-large"><div><span class="eyebrow">SENAM UTAMA</span><h2>Satu video untuk setiap sesi</h2><p>Video pukul 09.00, 11.00, dan 13.00 WITA. Alternatif disimpan di halaman terpisah.</p></div></div>
+        <div id="videos-list" class="main-session-grid"></div>
+        <p class="footnote">Empat referensi lain dan 19 video pilihan pengelola tetap tersedia melalui tombol Alternatif.</p>
+      </section>
+
+      <section id="page-alternatif" class="app-page hidden">
+        <div class="alt-page-heading">
+          <button type="button" class="outline small" data-alt-back>← Kembali</button>
+          <span class="eyebrow">SENAM ALTERNATIF</span>
+          <h2>Pilihan lain untuk sesi <span id="alt-session-time">09:00</span> WITA</h2>
+          <p>Pilih gerakan sesuai kemampuan. Hanya empat video ditampilkan per halaman.</p>
+        </div>
+        <div class="chip-row alt-filter" role="group" aria-label="Jenis senam alternatif">
+          <button class="chip active" type="button" data-alt-type="pilihan" aria-pressed="true">Pilihan Anda (19)</button>
+          <button class="chip" type="button" data-alt-type="referensi" aria-pressed="false">Referensi Lain (4)</button>
+        </div>
+        <div id="alt-list" class="alt-video-list"></div>
+        <div class="alt-pagination">
+          <button id="alt-prev" class="outline small" type="button" data-alt-page="-1">← Sebelumnya</button>
+          <span id="alt-page-label" class="muted">Halaman 1</span>
+          <button id="alt-next" class="outline small" type="button" data-alt-page="1">Berikutnya →</button>
+        </div>
       </section>
 
       <section id="page-riwayat" class="app-page hidden">
@@ -103,7 +121,7 @@
           <div class="panel"><h3>Pengingat saat aplikasi terbuka</h3><p>Izin notifikasi diperlukan. Pengingat ini belum bisa dijamin berjalan ketika aplikasi ditutup.</p><button id="notification-btn" class="outline">Aktifkan notifikasi</button><p id="notification-status" class="tiny"></p></div>
           <div class="panel"><h3>QR Code aplikasi</h3><p>Setelah situs dipublikasikan, bagikan kode QR yang menuju alamat situs ini.</p><div class="qr-box"><img id="qr-image" alt="QR Code menuju aplikasi K3 Active Break" width="170" height="170" loading="lazy"><span id="qr-placeholder" class="tiny">QR tersedia ketika situs menggunakan alamat HTTPS.</span></div><button id="share-app" class="outline">Bagikan tautan</button></div>
           <div class="panel"><h3>Impor data pegawai (CSV)</h3><p>Kolom wajib: <code>nama,profesi,unit</code>. Data impor tersimpan lokal, <b>tidak otomatis tersedia di HP pegawai lain</b>. Jangan unggah daftar pegawai ke repositori publik.</p><label class="file-input" for="csv-input">Pilih file CSV</label><input id="csv-input" type="file" accept=".csv,text/csv" hidden><p class="tiny" id="employee-count"></p><a class="file-link" href="template_pegawai.csv" download>Unduh contoh format CSV</a></div>
-          <div class="panel"><h3>Tambahkan Video Saya</h3><p>19 video pilihan pengelola sudah tersedia untuk semua pegawai di tab <b>Video Saya</b>. Tautan tambahan yang dimasukkan melalui formulir ini baru tersimpan pada perangkat yang digunakan.</p><form id="video-form"><label for="video-name">Judul video</label><input id="video-name" type="text" maxlength="100" placeholder="Contoh: Senam ceria 5 menit" required><label for="video-url">Tautan video</label><input id="video-url" type="url" placeholder="https://www.youtube.com/watch?v=..." required><label for="video-category">Kategori</label><select id="video-category"><option value="utama">Senam utama</option><option value="hiburan">Senam hiburan</option></select><button class="primary full" type="submit">Tambahkan video</button></form></div>
+          <div class="panel"><h3>Tambahkan Video Saya</h3><p>19 video pilihan pengelola tersedia pada halaman Alternatif. Video baru yang Anda tambahkan tersimpan di browser perangkat ini saja.</p><form id="video-form"><label for="video-name">Judul video</label><input id="video-name" type="text" maxlength="100" placeholder="Contoh: Senam ceria 5 menit" required><label for="video-url">Tautan video</label><input id="video-url" type="url" placeholder="https://www.youtube.com/watch?v=..." required><button class="primary full" type="submit">Tambahkan video</button></form></div>
         </div>
         <div class="danger-zone"><h3>Data tersimpan di perangkat ini</h3><p>Menghapus data akan menghilangkan riwayat lokal dan daftar pegawai/video yang pernah diimpor.</p><button id="clear-local" class="danger-button">Hapus data lokal</button></div>
       </section>
