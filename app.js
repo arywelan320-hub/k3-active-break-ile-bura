@@ -118,13 +118,11 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     {id:'FzLH3jzvIqo',title:'Video Pilihan 18',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'},
     {id:'CFpm4vGtMOY',title:'Video Pilihan 19',category:'saya',desc:'Pilihan pengelola Puskesmas • Judul dan durasi mengikuti YouTube',length:'Sesuai video'}
   ];
+  // Tiga jeda sukarela; satu video utama untuk setiap sesi.
   const SCHEDULE = [
-    {time:'07:00',title:'Pemanasan sebelum bekerja',duration:'3 menit',icon:'☀'},
-    {time:'08:30',title:'Peregangan leher dan bahu',duration:'3 menit',icon:'◌'},
-    {time:'10:00',title:'Senam ringan bersama',duration:'5 menit',icon:'✦'},
-    {time:'11:30',title:'Relaksasi mata dan punggung',duration:'3 menit',icon:'◉'},
-    {time:'13:00',title:'Senam penyegar tubuh',duration:'5 menit',icon:'♪'},
-    {time:'14:15',title:'Peregangan sebelum pulang',duration:'3 menit',icon:'✓'}
+    {time:'09:00',title:'Senam penyegar pagi',duration:'±5 menit',icon:'☀',videoId:'vFLPkKmCCLU',hint:'Peregangan ringan sebelum melanjutkan pelayanan'},
+    {time:'11:00',title:'Relaksasi tubuh',duration:'3–5 menit',icon:'◌',videoId:'N50xlk-EgU4',hint:'Peregangan statis untuk leher, bahu dan tubuh'},
+    {time:'13:00',title:'Senam penyegar siang',duration:'±5 menit',icon:'♪',videoId:'PeqWuQY-1CM',hint:'Gerakan dinamis ringan sesuai kemampuan'}
   ];
   const $ = (id) => document.getElementById(id);
   const initial = {employees:[],videos:[],history:[],userId:null};
@@ -134,7 +132,11 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   if (!Array.isArray(state.videos)) state.videos=[];
   if (!Array.isArray(state.history)) state.history=[];
   let currentVideo = null;
-  let videoFilter = 'semua';
+  let alternativeSession = '09:00';
+  let alternativeType = 'pilihan';
+  let alternativePage = 0;
+  let alternativeReturn = 'beranda';
+  const ALTERNATIVE_PAGE_SIZE = 4;
   let toastTimer;
   const save = () => {try {localStorage.setItem(STORAGE,JSON.stringify(state));} catch {notify('Penyimpanan browser penuh atau diblokir.');}};
   const getEmployees = () => state.employees.length ? state.employees : PEGAWAI_2026;
@@ -183,30 +185,80 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     text('today-date',formatDate());
     text('total-schedule',SCHEDULE.length);
     text('employee-count',`${getEmployees().length} pegawai ${state.employees.length?'hasil impor':'data kepegawaian 2026'} tersedia di perangkat ini.`);
-    renderFeatured();renderVideos();renderSchedule();renderHistory();updateClock();navigate(location.hash.slice(1)||'beranda');
+    renderVideos();renderSchedule();renderHistory();updateClock();navigate(location.hash.slice(1)||'beranda');
   }
   function updateClock(){
     const {date,time}=localParts();
     text('wita-clock',`${time} WITA`);
-    const remaining=SCHEDULE.find(x=>x.time>time);
+    const remaining=SCHEDULE.find(x=>x.time>=time);
     text('next-time',remaining?.time??'Selesai');
     text('next-title',remaining?.title??'Jadwal hari ini telah selesai');
     text('today-count',state.history.filter(x=>x.userId===state.userId&&x.date===date).length);
   }
-  function renderFeatured(){
-    const v=getVideos().find(x=>x.category==='utama')||getVideos()[0];
-    if(!v){$('featured-video').innerHTML='<p>Belum ada video.</p>';return;}
-    $('featured-video').innerHTML=`<div class="thumb"><img src="${videoThumb(v.id)}" alt="Cuplikan video ${safe(v.title)}" loading="lazy"><span class="thumb-play">▶</span></div><div><span class="pill">Senam utama</span><h3>${safe(v.title)}</h3><p>${safe(v.desc)}</p><p>Durasi: ${safe(v.length||'Sesuai video')}</p><button class="primary" data-play="${v.id}">▶ Putar senam sekarang</button></div>`;
-  }
-  function renderVideos(){
-    const videos=videoFilter==='saya'?[...SHARED_USER_VIDEOS,...state.videos]:getVideos().filter(v=>videoFilter==='semua'||v.category===videoFilter);
-    const output=$('videos-list');
-    if(!videos.length){output.innerHTML='<div class="empty-state">Belum ada video pada kategori ini. Tambahkan melalui Pengaturan.</div>';return;}
-    output.innerHTML=videos.map(v=>`<article class="video-card"><div class="thumb"><img src="${videoThumb(v.id)}" alt="Cuplikan video ${safe(v.title)}" loading="lazy"><span class="thumb-play">▶</span></div><div class="video-card-body"><span class="pill">${v.category==='utama'?'Senam utama':v.category==='hiburan'?'Senam hiburan':'Video Saya'}</span><h3>${safe(v.title)}</h3><p>${safe(v.desc)}${v.length?' • '+safe(v.length):''}</p><button class="primary" data-play="${v.id}">▶ Putar di aplikasi</button></div></article>`).join('');
+
+  function getMainVideo(session){
+    return DEFAULT_VIDEOS.find(v=>v.id===session.videoId);
   }
   function renderSchedule(){
-    const {time}=localParts();
-    $('schedule-list').innerHTML=SCHEDULE.map(s=>`<div class="schedule-row"><span class="schedule-time">${s.time}</span><span class="schedule-icon" aria-hidden="true">${s.icon}</span><div class="schedule-main"><strong>${safe(s.title)}</strong><span>${safe(s.duration)}</span></div><span class="schedule-status">${s.time<time?'Lewat':s.time===time?'Saat ini':'Terjadwal'}</span></div>`).join('');
+    const currentTime=localParts().time;
+    $('schedule-list').innerHTML=SCHEDULE.map(s=>{
+      const v=getMainVideo(s);
+      const status=s.time<currentTime?'Lewat':s.time===currentTime?'Saat ini':'Terjadwal';
+      return '<article class="session-card '+(status==='Saat ini'?'session-current':'')+'">' +
+        '<div class="session-top"><span class="session-time">'+safe(s.time)+' <small>WITA</small></span><span class="session-status">'+status+'</span></div>' +
+        '<h3>'+safe(s.title)+'</h3><p class="session-hint">'+safe(s.hint)+' • '+safe(s.duration)+'</p>' +
+        '<div class="session-video-title"><span class="pill">Senam utama</span><span>'+safe(v?.title||'Belum tersedia')+'</span></div>' +
+        '<div class="session-actions"><button type="button" class="primary" data-play="'+safe(s.videoId)+'">▶ Putar utama</button>' +
+        '<button type="button" class="outline" data-alt-session="'+safe(s.time)+'">Pilihan alternatif</button></div></article>';
+    }).join('');
+  }
+  function renderVideos(){
+    $('videos-list').innerHTML=SCHEDULE.map(s=>{
+      const v=getMainVideo(s);
+      if(!v)return '';
+      return '<article class="main-video-card"><img class="main-video-thumb" src="'+videoThumb(v.id)+'" alt="Cuplikan '+safe(v.title)+'" loading="lazy">' +
+        '<div class="main-video-content"><span class="pill">'+safe(s.time)+' WITA • Senam utama</span><h3>'+safe(v.title)+'</h3>' +
+        '<p>'+safe(s.title)+' • '+safe(v.desc)+'</p><div class="session-actions">' +
+        '<button type="button" class="primary" data-play="'+safe(v.id)+'">▶ Putar video</button>' +
+        '<button type="button" class="outline" data-alt-session="'+safe(s.time)+'">Alternatif sesi ini</button></div></div></article>';
+    }).join('');
+  }
+  function getAlternativeVideos(){
+    const mainIds=new Set(SCHEDULE.map(s=>s.videoId));
+    return alternativeType==='referensi' ?
+      DEFAULT_VIDEOS.filter(v=>!mainIds.has(v.id)) :
+      [...SHARED_USER_VIDEOS,...state.videos];
+  }
+  function renderAlternatives(){
+    const session=SCHEDULE.find(s=>s.time===alternativeSession)||SCHEDULE[0];
+    text('alt-session-time',session.time);
+    const videos=getAlternativeVideos();
+    const pages=Math.max(1,Math.ceil(videos.length/ALTERNATIVE_PAGE_SIZE));
+    alternativePage=Math.max(0,Math.min(alternativePage,pages-1));
+    const start=alternativePage*ALTERNATIVE_PAGE_SIZE;
+    const items=videos.slice(start,start+ALTERNATIVE_PAGE_SIZE);
+    $('alt-list').innerHTML=items.length?items.map(v=>
+      '<article class="alt-video-card"><img src="'+videoThumb(v.id)+'" alt="Cuplikan '+safe(v.title)+'" loading="lazy">' +
+      '<div class="alt-video-body"><h3>'+safe(v.title)+'</h3><p>'+safe(v.desc)+'</p>' +
+      '<button type="button" class="primary small" data-play="'+safe(v.id)+'">▶ Putar di aplikasi</button></div></article>'
+    ).join(''):'<div class="empty-state">Belum ada video pada bagian ini.</div>';
+    text('alt-page-label','Halaman '+(alternativePage+1)+' dari '+pages);
+    $('alt-prev').disabled=alternativePage===0;
+    $('alt-next').disabled=alternativePage>=pages-1;
+    document.querySelectorAll('[data-alt-type]').forEach(btn=>{
+      const selected=btn.dataset.altType===alternativeType;
+      btn.classList.toggle('active',selected);
+      btn.setAttribute('aria-pressed',String(selected));
+    });
+  }
+  function openAlternatives(time){
+    if(!SCHEDULE.some(s=>s.time===time))return;
+    alternativeSession=time;
+    alternativeReturn=$('page-video').classList.contains('hidden')?'beranda':'video';
+    alternativeType='pilihan';
+    alternativePage=0;
+    location.hash='alternatif';
+    navigate('alternatif');
   }
   function renderHistory(){
     const data=state.history.filter(x=>x.userId===state.userId).slice().sort((a,b)=>b.at.localeCompare(a.at));
@@ -214,11 +266,14 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     text('history-days',new Set(data.map(x=>x.date)).size);
     $('history-list').innerHTML=data.length?data.map(x=>`<div class="history-item"><div class="history-icon">✓</div><div><strong>${safe(x.videoTitle)}</strong><span>${safe(x.date)} • ${safe(x.time)} WITA</span></div><span>Konfirmasi mandiri</span></div>`).join(''):'<div class="empty-state">Belum ada riwayat. Mulai video, lakukan gerakan sesuai kemampuan, lalu tekan “Saya sudah mengikuti senam”.</div>';
   }
+
   function navigate(page){
-    if(!['beranda','video','riwayat','pengaturan'].includes(page)) page='beranda';
-    document.querySelectorAll('.app-page').forEach(el=>el.classList.toggle('hidden',el.id!==`page-${page}`));
-    document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.go===page));
+    if(!['beranda','video','alternatif','riwayat','pengaturan'].includes(page))page='beranda';
+    document.querySelectorAll('.app-page').forEach(el=>el.classList.toggle('hidden',el.id!=='page-'+page));
+    const selectedNav=page==='alternatif'?'video':page;
+    document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.go===selectedNav));
     if(page==='riwayat')renderHistory();
+    if(page==='alternatif')renderAlternatives();
     if(page==='pengaturan')updateQr();
     window.scrollTo({top:0,behavior:'instant'});
   }
@@ -277,16 +332,23 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     save();closePlayer();renderHistory();updateClock();notify('Konfirmasi aktivitas berhasil dicatat di perangkat ini.');
   }
   // Browser-only reminder: notifications do not run when the tab or browser is fully closed.
+
   function checkReminder(){
-    if(!getUser())return;
+    // Pengingat ringan hanya ketika aplikasi terbuka, tidak memulai video otomatis.
+    if(!getUser()||document.hidden||$('player-dialog').open)return;
     const {date,time}=localParts();
     const session=SCHEDULE.find(s=>s.time===time);
     if(!session)return;
     const key='k3_reminder_'+date+'_'+time;
     if(sessionStorage.getItem(key))return;
     sessionStorage.setItem(key,'1');
-    notify(`Waktu K3: ${session.title}. Sesuaikan dengan pelayanan pasien.`);
-    if('Notification' in window&&Notification.permission==='granted')new Notification('K3 Active Break',{body:`${session.title} • ${session.duration}. Jika pelayanan memungkinkan.`,icon:'assets/icon.svg'});
+    notify('Jeda K3 '+session.time+': '+session.title+'. Jika melayani pasien, boleh dilewati.');
+    if('Notification' in window&&Notification.permission==='granted'){
+      new Notification('Pengingat K3 (opsional)',{
+        body:session.title+'. Lakukan hanya jika pelayanan memungkinkan.',
+        icon:'assets/icon.svg',silent:true
+      });
+    }
   }
   function updateQr(){
     const isWeb=location.protocol==='https:'||location.hostname==='localhost';
@@ -340,9 +402,20 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   $('employee').addEventListener('change',()=>{$('login-btn').disabled=!$('employee').value;});
   $('login-btn').addEventListener('click',()=>{const id=$('employee').value;if(!getEmployees().some(x=>x.id===id))return;state.userId=id;save();showApp();});
   $('change-user').addEventListener('click',()=>{state.userId=null;save();showApp();});
+
   document.addEventListener('click',e=>{
-    const go=e.target.closest('[data-go]');if(go){location.hash=go.dataset.go;navigate(go.dataset.go);}
-    const play=e.target.closest('[data-play]');if(play)openPlayer(play.dataset.play);
+    const play=e.target.closest('[data-play]');
+    if(play){openPlayer(play.dataset.play);return;}
+    const alt=e.target.closest('[data-alt-session]');
+    if(alt){openAlternatives(alt.dataset.altSession);return;}
+    const type=e.target.closest('[data-alt-type]');
+    if(type){alternativeType=type.dataset.altType;alternativePage=0;renderAlternatives();return;}
+    const paging=e.target.closest('[data-alt-page]');
+    if(paging){alternativePage+=Number(paging.dataset.altPage);renderAlternatives();return;}
+    const back=e.target.closest('[data-alt-back]');
+    if(back){location.hash=alternativeReturn;navigate(alternativeReturn);return;}
+    const go=e.target.closest('[data-go]');
+    if(go){location.hash=go.dataset.go;navigate(go.dataset.go);}
   });
   window.addEventListener('hashchange',()=>{if(getUser())navigate(location.hash.slice(1));});
   $('player-mode-standard').addEventListener('click',()=>setPlayerMode('standard'));
@@ -351,7 +424,7 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   $('close-player-2').addEventListener('click',closePlayer);
   $('player-dialog').addEventListener('close',()=>{$('video-frame').replaceChildren();currentVideo=null;});
   $('finish-video').addEventListener('click',saveActivity);
-  document.querySelectorAll('[data-filter]').forEach(el=>el.addEventListener('click',()=>{videoFilter=el.dataset.filter;document.querySelectorAll('[data-filter]').forEach(c=>c.classList.toggle('active',c===el));renderVideos();}));
+  // Alternatif ditampilkan pada halaman tersendiri, empat video per halaman.
   $('export-csv').addEventListener('click',exportHistory);
   $('notification-btn').addEventListener('click',async()=>{
     if(!('Notification' in window)){notify('Browser tidak mendukung notifikasi.');return;}
@@ -360,15 +433,15 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   $('share-app').addEventListener('click',async()=>{const url=new URL('./',location.href).href;if(location.protocol==='file:'){notify('Publikasikan situs dulu untuk mendapat tautan QR.');return;}try{if(navigator.share)await navigator.share({title:'K3 Active Break',url});else if(navigator.clipboard){await navigator.clipboard.writeText(url);notify('Tautan aplikasi disalin.');}else notify(url);}catch(e){if(e.name!=='AbortError')notify('Tidak bisa membagikan tautan.');}});
   $('csv-input').addEventListener('change',async(e)=>{const f=e.target.files?.[0];if(!f)return;try {importCsv(await f.text());} catch(err){notify(err.message);}e.target.value='';});
   $('video-form').addEventListener('submit',e=>{
-    e.preventDefault();const title=$('video-name').value.trim(),id=yid($('video-url').value.trim()),category=$('video-category').value;
+    e.preventDefault();const title=$('video-name').value.trim(),id=yid($('video-url').value.trim());
     if(!id){notify('Gunakan tautan video YouTube yang valid.');return;}
     if(getVideos().some(v=>v.id===id)){notify('Video ini sudah ada dalam daftar.');return;}
-    state.videos.push({id,title,category,desc:'Video pilihan pegawai • Tautan YouTube',length:'Sesuai video'});
-    save();e.target.reset();renderVideos();renderFeatured();notify('Video ditambahkan di perangkat ini.');
+    state.videos.push({id,title,category:'saya',desc:'Video tambahan di perangkat ini • Tautan YouTube',length:'Sesuai video'});
+    save();e.target.reset();renderAlternatives();notify('Video alternatif ditambahkan di perangkat ini.');
   });
   $('clear-local').addEventListener('click',()=>{
     if(!confirm('Hapus semua data pegawai impor, video tambahan, identitas, dan riwayat pada browser ini?'))return;
-    localStorage.removeItem(STORAGE);state={...initial};videoFilter='semua';showApp();notify('Data lokal berhasil dihapus.');
+    localStorage.removeItem(STORAGE);state={...initial};alternativeType='pilihan';alternativePage=0;showApp();notify('Data lokal berhasil dihapus.');
   });
   showApp();
   setInterval(()=>{if(getUser()){updateClock();renderSchedule();checkReminder();}else{const {time}=localParts();text('wita-clock',`${time} WITA`);}},20000);
