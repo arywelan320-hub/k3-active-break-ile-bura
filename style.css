@@ -315,3 +315,23 @@
 .reward-progress-track{height:7px;background:#e2efeb;border-radius:20px;overflow:hidden;margin-top:6px}
 #reward-progress-bar{height:100%;background:#0b8277;width:0;transition:width .3s ease;border-radius:inherit}
 @media(prefers-reduced-motion:reduce){#reward-progress-bar{transition:none}}
+
+/* K3 Smart Motion: pilihan sukarela, kamera terlihat, dan status lokal. */
+.motion-choice-dialog{border:0;border-radius:22px;width:min(530px,calc(100% - 24px));padding:25px;color:var(--ink);box-shadow:0 30px 90px #092a30a8}
+.motion-choice-dialog::backdrop{background:rgba(5,35,40,.75)}
+.motion-choice-heading h2{font-size:25px;line-height:1.2;margin:9px 0}
+.motion-choice-heading p{font-size:13px;color:var(--muted);margin:0 0 20px}
+.motion-choice-card{display:flex;align-items:flex-start;text-align:left;gap:14px;width:100%;padding:17px;margin:10px 0;border:1px solid #d4e5e1;border-radius:15px;background:#fff;color:var(--ink)}
+.motion-choice-card:hover,.motion-choice-card:focus-visible{border-color:#0b8178;background:#f0faf6}
+.motion-choice-card strong{display:block;font-size:15px;margin-bottom:4px}
+.motion-choice-card small{display:block;font-size:12px;line-height:1.45;color:var(--muted)}
+.motion-choice-icon{width:45px;height:45px;flex:none;border-radius:12px;background:#e4f5ee;color:#08766b;display:grid;place-items:center;font-size:23px}
+.motion-choice-cancel{display:block;background:transparent;border:0;color:var(--muted);margin:12px auto 0;padding:10px}
+.motion-camera-panel{border:1px solid #bbddd3;background:#f1f9f5;border-radius:14px;padding:12px;margin:12px 0}
+.motion-camera-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.motion-camera-head strong{font-size:13px}
+.motion-camera-panel video{display:block;width:min(300px,100%);height:auto;max-height:215px;aspect-ratio:4/3;object-fit:cover;background:#14353b;border-radius:11px;transform:scaleX(-1);margin:0 auto}
+.motion-camera-panel p{font-size:12px;text-align:center;margin:8px 0 2px;color:#23645b}
+.motion-camera-panel .tiny{margin-top:5px}
+.motion-reward-report{border-radius:12px;background:#f1f8f7;color:#275e57;font-size:12px;padding:12px;margin:12px 0}
+@media(max-width:440px){.motion-choice-dialog{padding:18px}.motion-choice-card{padding:13px}.motion-camera-head{flex-wrap:wrap}}
