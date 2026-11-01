@@ -222,24 +222,51 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     if(page==='pengaturan')updateQr();
     window.scrollTo({top:0,behavior:'instant'});
   }
+  // Pemutar YouTube berada di dalam dialog aplikasi. Gunakan pemutar standar
+  // dahulu; jika browser memblokirnya, pengguna bisa beralih ke mode privasi.
+  // Catatan: kebijakan penyematan tetap ditentukan oleh pemilik video/YouTube.
+  function setPlayerMode(mode){
+    if(!currentVideo)return;
+    const id=currentVideo.id;
+    const host=mode==='private'?'www.youtube-nocookie.com':'www.youtube.com';
+    const params=new URLSearchParams({rel:'0',playsinline:'1',origin:location.origin});
+    const frame=document.createElement('iframe');
+    frame.src='https://'+host+'/embed/'+encodeURIComponent(id)+'?'+params.toString();
+    frame.title='Pemutar YouTube: '+currentVideo.title;
+    frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    frame.referrerPolicy='strict-origin-when-cross-origin';
+    frame.allowFullscreen=true;
+    frame.loading='eager';
+    const status=$('video-player-status');
+    if(status)status.textContent='Memuat video di dalam aplikasi...';
+    frame.addEventListener('load',()=>{
+      if(status&&frame.isConnected)status.textContent='Jika layar tetap hitam atau muncul pesan kesalahan, coba mode pemutar lainnya di bawah.';
+    });
+    frame.addEventListener('error',()=>{
+      if(status&&frame.isConnected)status.textContent='Pemutar tidak berhasil dimuat. Coba mode pemutar lainnya.';
+    });
+    $('video-frame').replaceChildren(frame);
+    $('player-mode-standard')?.classList.toggle('active',mode==='standard');
+    $('player-mode-private')?.classList.toggle('active',mode==='private');
+    $('player-mode-standard')?.setAttribute('aria-pressed',String(mode==='standard'));
+    $('player-mode-private')?.setAttribute('aria-pressed',String(mode==='private'));
+  }
   function openPlayer(id){
     const v=getVideos().find(x=>x.id===id);
     if(!v)return;
     currentVideo=v;
     text('player-title',v.title);
     text('player-description',v.desc);
-    const iframe=document.createElement('iframe');
-    iframe.src=`https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?rel=0&playsinline=1`;
-    iframe.title=`Pemutar video: ${v.title}`;
-    iframe.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-    iframe.referrerPolicy='strict-origin-when-cross-origin';
-    iframe.allowFullscreen=true;
-    $('video-frame').replaceChildren(iframe);
     const backup=$('player-fallback-link');
     if(backup)backup.href='https://www.youtube.com/watch?v='+encodeURIComponent(id);
     $('player-dialog').showModal();
+    setPlayerMode('standard');
   }
-  function closePlayer(){$('player-dialog').close();$('video-frame').replaceChildren();currentVideo=null;}
+  function closePlayer(){
+    $('player-dialog').close();
+    $('video-frame').replaceChildren();
+    currentVideo=null;
+  }
   function saveActivity(){
     if(!currentVideo||!getUser())return;
     const {date,time}=localParts();
@@ -318,6 +345,8 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     const play=e.target.closest('[data-play]');if(play)openPlayer(play.dataset.play);
   });
   window.addEventListener('hashchange',()=>{if(getUser())navigate(location.hash.slice(1));});
+  $('player-mode-standard').addEventListener('click',()=>setPlayerMode('standard'));
+  $('player-mode-private').addEventListener('click',()=>setPlayerMode('private'));
   $('close-player').addEventListener('click',closePlayer);
   $('close-player-2').addEventListener('click',closePlayer);
   $('player-dialog').addEventListener('close',()=>{$('video-frame').replaceChildren();currentVideo=null;});
