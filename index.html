@@ -8,8 +8,8 @@
   <title>K3 Active Break | Puskesmas Ile Bura</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="style.css?v=2">
-  <script src="app.js?v=video-saya-19-v1" defer></script>
+  <link rel="stylesheet" href="style.css?v=pemutar-v3">
+  <script src="app.js?v=pemutar-v3" defer></script>
 </head>
 <body>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -121,7 +121,14 @@
     <div class="player-dialog-head"><div><span class="eyebrow">WAKTU BERGERAK</span><h2 id="player-title">Video senam</h2></div><button class="icon-button" id="close-player" aria-label="Tutup video">✕</button></div>
     <div id="video-frame" class="video-frame"></div>
     <p id="player-description" class="muted"></p>
-    <p class="tiny">Jika video tidak bisa diputar di aplikasi, <a id="player-fallback-link" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">buka videonya di YouTube</a>.</p>
+    <div class="player-embed-tools">
+      <p id="video-player-status" class="player-embed-status" role="status" aria-live="polite">Memuat video di dalam aplikasi...</p>
+      <div class="player-mode-buttons" role="group" aria-label="Mode pemutar YouTube">
+        <button id="player-mode-standard" class="player-mode-button active" type="button" aria-pressed="true">Pemutar standar</button>
+        <button id="player-mode-private" class="player-mode-button" type="button" aria-pressed="false">Coba mode privasi</button>
+      </div>
+    </div>
+    <p class="tiny player-outbound-note">Video tetap diputar di dalam aplikasi. Jika pemilik video membatasi penyematan, <a id="player-fallback-link" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">buka melalui YouTube</a> adalah pilihan terakhir.</p>
     <div class="player-actions"><button id="finish-video" class="primary">Saya sudah mengikuti senam ✓</button><button id="close-player-2" class="outline">Tutup</button></div>
     <p class="tiny">Tombol selesai adalah pernyataan mandiri. Menonton video tidak membuktikan seseorang mengikuti semua gerakan.</p>
   </dialog>
