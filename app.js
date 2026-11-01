@@ -208,8 +208,8 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
         '<div class="session-top"><span class="session-time">'+safe(s.time)+' <small>WITA</small></span><span class="session-status">'+status+'</span></div>' +
         '<h3>'+safe(s.title)+'</h3><p class="session-hint">'+safe(s.hint)+' • '+safe(s.duration)+'</p>' +
         '<div class="session-video-title"><span class="pill">Senam utama</span><span>'+safe(v?.title||'Belum tersedia')+'</span></div>' +
-        '<div class="session-actions"><button type="button" class="primary" data-play="'+safe(s.videoId)+'">▶ Putar utama</button>' +
-        '<button type="button" class="outline" data-alt-session="'+safe(s.time)+'">Pilihan alternatif</button></div></article>';
+        '<div class="session-actions session-actions-stacked"><button type="button" class="primary session-primary-action" data-play="'+safe(s.videoId)+'" aria-label="Mulai senam utama pukul '+safe(s.time)+'"><span class="session-action-symbol" aria-hidden="true">▶</span><span>Mulai Senam</span></button>' +
+        '<button type="button" class="outline session-secondary-action" data-alt-session="'+safe(s.time)+'" aria-label="Lihat pilihan senam lain untuk pukul '+safe(s.time)+'"><span class="session-action-symbol" aria-hidden="true">▤</span><span>Pilihan Senam Lain</span><span class="action-chevron" aria-hidden="true">›</span></button></div></article>';
     }).join('');
   }
   function renderVideos(){
@@ -218,9 +218,9 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
       if(!v)return '';
       return '<article class="main-video-card"><img class="main-video-thumb" src="'+videoThumb(v.id)+'" alt="Cuplikan '+safe(v.title)+'" loading="lazy">' +
         '<div class="main-video-content"><span class="pill">'+safe(s.time)+' WITA • Senam utama</span><h3>'+safe(v.title)+'</h3>' +
-        '<p>'+safe(s.title)+' • '+safe(v.desc)+'</p><div class="session-actions">' +
-        '<button type="button" class="primary" data-play="'+safe(v.id)+'">▶ Putar video</button>' +
-        '<button type="button" class="outline" data-alt-session="'+safe(s.time)+'">Alternatif sesi ini</button></div></div></article>';
+        '<p>'+safe(s.title)+' • '+safe(v.desc)+'</p><div class="session-actions session-actions-stacked">' +
+        '<button type="button" class="primary session-primary-action" data-play="'+safe(v.id)+'" aria-label="Mulai senam utama pukul '+safe(s.time)+'"><span class="session-action-symbol" aria-hidden="true">▶</span><span>Mulai Senam</span></button>' +
+        '<button type="button" class="outline session-secondary-action" data-alt-session="'+safe(s.time)+'" aria-label="Lihat pilihan senam lain untuk pukul '+safe(s.time)+'"><span class="session-action-symbol" aria-hidden="true">▤</span><span>Pilihan Senam Lain</span><span class="action-chevron" aria-hidden="true">›</span></button></div></div></article>';
     }).join('');
   }
   function getAlternativeVideos(){
