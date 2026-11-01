@@ -8,8 +8,9 @@
   <title>K3 Active Break | Puskesmas Ile Bura</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="style.css?v=reward-k3-v2">
-  <script src="app.js?v=reward-k3-v2" defer></script>
+  <link rel="stylesheet" href="style.css?v=smart-motion-v1">
+  <script defer src="motion.js?v=smart-motion-v1"></script>
+  <script src="app.js?v=smart-motion-v1" defer></script>
 </head>
 <body>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -135,9 +136,33 @@
     </section>
   </main>
 
+  <dialog id="motion-choice-dialog" class="motion-choice-dialog" aria-labelledby="motion-choice-title">
+    <div class="motion-choice-heading">
+      <span class="eyebrow">K3 ACTIVE BREAK</span>
+      <h2 id="motion-choice-title">Pilih cara mengikuti senam</h2>
+      <p>Anda bebas memilih. Penggunaan kamera tidak wajib dan tidak memengaruhi poin.</p>
+    </div>
+    <button id="motion-choose-normal" class="motion-choice-card" type="button">
+      <span class="motion-choice-icon" aria-hidden="true">▶</span>
+      <span><strong>Senam Biasa</strong><small>Putar video tanpa menggunakan kamera.</small></span>
+    </button>
+    <button id="motion-choose-camera" class="motion-choice-card" type="button">
+      <span class="motion-choice-icon" aria-hidden="true">◎</span>
+      <span><strong>Senam dengan Deteksi Gerakan</strong><small>Kamera hanya aktif setelah Anda memberi izin. Analisis berjalan di perangkat. Tidak ada foto atau video yang disimpan atau dikirim ke admin.</small></span>
+    </button>
+    <p class="tiny">Deteksi gerakan hanya perkiraan; cahaya, posisi kamera, dan keterbatasan gerak dapat memengaruhi hasil. Poin tetap dari konfirmasi mandiri.</p>
+    <button id="motion-choose-cancel" class="motion-choice-cancel" type="button">Batal</button>
+  </dialog>
   <dialog id="player-dialog" class="player-dialog">
     <div class="player-dialog-head"><div><span class="eyebrow">WAKTU BERGERAK</span><h2 id="player-title">Video senam</h2></div><button class="icon-button" id="close-player" aria-label="Tutup video">✕</button></div>
     <div id="video-frame" class="video-frame"></div>
+    <div id="motion-camera-panel" class="motion-camera-panel hidden">
+      <div class="motion-camera-head"><strong>Deteksi Gerakan Aktif</strong><button id="motion-stop-camera" class="outline small" type="button">Matikan Kamera</button></div>
+      <video id="motion-camera-video" autoplay muted playsinline aria-label="Pratinjau kamera Anda. Tidak direkam."></video>
+      <p id="motion-status" role="status" aria-live="polite">Menyiapkan kamera...</p>
+      <p class="tiny">Pratinjau hanya terlihat di perangkat ini. Tidak ada foto atau rekaman yang disimpan.</p>
+    </div>
+
     <p id="player-description" class="muted"></p>
     <div class="player-embed-tools">
       <p id="video-player-status" class="player-embed-status" role="status" aria-live="polite">Memuat video di dalam aplikasi...</p>
@@ -165,6 +190,7 @@
     <h2 id="reward-title">Video senam selesai!</h2>
     <div class="reward-time">Sesi <strong id="reward-session">09:00 WITA</strong></div>
     <p id="reward-tip" class="reward-tip">Gerakan kecil, manfaat berarti.</p>
+    <p id="reward-motion-report" class="motion-reward-report hidden"></p>
     <p id="reward-context" class="reward-context">Apakah Anda mengikuti gerakan senam tadi?</p>
     <div class="reward-points" id="reward-score">Konfirmasi gerakan: +10 poin lokal</div>
     <div class="reward-progress"><span id="reward-progress">Kemajuan hari ini: 0 dari 3 sesi</span><div class="reward-progress-track"><div id="reward-progress-bar"></div></div></div>
