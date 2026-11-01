@@ -8,8 +8,8 @@
   <title>K3 Active Break | Puskesmas Ile Bura</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="style.css?v=model1-senam-v2">
-  <script src="app.js?v=model1-senam-v2" defer></script>
+  <link rel="stylesheet" href="style.css?v=reward-k3-v1">
+  <script src="app.js?v=reward-k3-v1" defer></script>
 </head>
 <body>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -147,8 +147,32 @@
       </div>
     </div>
     <p class="tiny player-outbound-note">Video tetap diputar di dalam aplikasi. Jika pemilik video membatasi penyematan, <a id="player-fallback-link" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">buka melalui YouTube</a> adalah pilihan terakhir.</p>
-    <div class="player-actions"><button id="finish-video" class="primary">Saya sudah mengikuti senam ✓</button><button id="close-player-2" class="outline">Tutup</button></div>
+    <div class="player-actions"><button id="finish-video" class="primary">Konfirmasi kegiatan manual</button><button id="close-player-2" class="outline">Tutup</button></div>
     <p class="tiny">Tombol selesai adalah pernyataan mandiri. Menonton video tidak membuktikan seseorang mengikuti semua gerakan.</p>
+  </dialog>
+  <dialog id="reward-dialog" class="reward-dialog" aria-labelledby="reward-title">
+    <div class="reward-confetti" id="reward-confetti" aria-hidden="true"></div>
+    <div class="reward-trophy" aria-hidden="true">
+      <svg viewBox="0 0 120 120" width="112" height="112" role="img">
+        <defs><linearGradient id="goldGradient" x1="0" x2="1"><stop stop-color="#C38423"/><stop offset=".48" stop-color="#FFF2A2"/><stop offset="1" stop-color="#C88B30"/></linearGradient></defs>
+        <path d="M32 20h56v29c0 23-11 35-28 39-17-4-28-16-28-39z" fill="url(#goldGradient)" stroke="#AC741F" stroke-width="2"/>
+        <path d="M32 28H17v17c0 13 8 22 23 23M88 28h15v17c0 13-8 22-23 23" fill="none" stroke="#D7A140" stroke-width="8" stroke-linejoin="round"/>
+        <path d="M60 86v17M40 107h40" stroke="#BE842D" stroke-width="9" stroke-linecap="round"/>
+        <path d="m60 31 5.5 11 12 1.7-8.7 8.5 2.1 12-10.9-5.7-10.9 5.7 2.1-12-8.7-8.5 12-1.7z" fill="#FFF4B7"/>
+      </svg>
+    </div>
+    <span class="reward-kicker">K3 ACTIVE BREAK • APRESIASI</span>
+    <h2 id="reward-title">Video senam selesai!</h2>
+    <div class="reward-time">Sesi <strong id="reward-session">09:00 WITA</strong></div>
+    <p id="reward-tip" class="reward-tip">Gerakan kecil, manfaat berarti.</p>
+    <p id="reward-context" class="reward-context">Apakah Anda mengikuti gerakan senam tadi?</p>
+    <div class="reward-points" id="reward-score">Konfirmasi gerakan: +10 poin lokal</div>
+    <div class="reward-actions">
+      <button id="reward-participated" class="primary" type="button">Ya, saya ikut bergerak</button>
+      <button id="reward-watched" class="outline" type="button">Saya hanya menonton</button>
+    </div>
+    <button id="reward-close" class="reward-exit" type="button">Tutup tanpa mencatat</button>
+    <p class="tiny reward-note">Poin berdasarkan pernyataan mandiri, bukan bukti gerakan. Data masih tersimpan di perangkat ini dan belum masuk Google Sheets.</p>
   </dialog>
   <footer class="site-footer container">K3 Active Break • Rancangan kegiatan kebugaran pegawai • UPTD Puskesmas Ile Bura</footer>
 </body>
