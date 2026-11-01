@@ -221,3 +221,66 @@
   .alt-pagination .outline{font-size:11px;padding:8px 9px}
   .alt-pagination .muted{font-size:11px}
 }
+
+/* Model 1: dua tombol bertingkat, jelas dan mudah ditekan di HP. */
+.session-actions.session-actions-stacked {
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  width:100%;
+  margin-top:13px;
+}
+.session-actions-stacked button {
+  width:100%;
+  flex:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-height:48px;
+  padding:12px 14px;
+  border-radius:12px;
+  font-size:14px;
+  line-height:1.3;
+  font-weight:750;
+  transition:background-color .16s ease,border-color .16s ease,transform .16s ease;
+}
+.session-actions-stacked .session-primary-action {
+  background:#0b575b;
+  color:#fff;
+  border:1px solid #0b575b;
+  box-shadow:0 4px 10px rgba(11,87,91,.12);
+}
+.session-actions-stacked .session-primary-action:hover {
+  background:#08474b;
+  border-color:#08474b;
+}
+.session-actions-stacked .session-secondary-action {
+  background:#fff;
+  color:#0b575b;
+  border:1px solid #b9d5d3;
+}
+.session-actions-stacked .session-secondary-action:hover {
+  background:#edf8f6;
+  border-color:#74ada7;
+}
+.session-actions-stacked button:focus-visible {
+  outline:3px solid #63cbb0;
+  outline-offset:3px;
+}
+.session-actions-stacked button:active {transform:scale(.99)}
+.session-actions-stacked .session-action-symbol {
+  display:inline-flex;
+  justify-content:center;
+  width:20px;
+  font-size:17px;
+  line-height:1;
+}
+.session-actions-stacked .action-chevron {
+  font-size:20px;
+  line-height:1;
+  margin-left:0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .session-actions-stacked button {transition:none}
+}
