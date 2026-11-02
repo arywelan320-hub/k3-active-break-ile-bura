@@ -101,7 +101,7 @@ function doPost(e){
         if(index<0)throw Error('Pegawai tidak ditemukan.');
         if(d.approve===true){
           const alias=String(d.alias||'').trim();
-          if(alias.length<3||alias.length>26||!/^[\\p{L}\\p{N} .'-]+$/u.test(alias))throw Error('Alias harus 3-26 karakter dan tanpa simbol khusus.');
+          if(alias.length<3||alias.length>26||!/^[\p{L}\p{N} .'-]+$/u.test(alias))throw Error('Alias harus 3-26 karakter dan tanpa simbol khusus.');
           sheet.getRange(index+2,4,1,2).setValues([[alias,'YA']]);
         }else{
           sheet.getRange(index+2,4,1,2).setValues([['','TIDAK']]);
@@ -134,4 +134,18 @@ function buatKodeAdmin(){
   const code=Utilities.getUuid().replace(/-/g,'').slice(0,24).toUpperCase();
   PropertiesService.getScriptProperties().setProperty('ADMIN_CODE_HASH',digest(code));
   Logger.log('SIMPAN KODE ADMIN DI TEMPAT AMAN: '+code);
+}
+
+// Jalankan setelah kode pegawai dan kode admin dibuat.
+// Memastikan tab dan identitas file benar sebelum penerbitan Web App.
+function cekKesiapan(){
+  const required=['Pegawai','Akses','Login','Aktivitas','Peringkat'];
+  const missing=required.filter(name=>!tab(name));
+  if(missing.length)throw Error('Sheet belum tersedia: '+missing.join(', '));
+  const staff=asRows('Pegawai');
+  if(staff.length!==74)throw Error('Daftar pegawai tidak 74: '+staff.length);
+  const codes=asRows('Akses');
+  if(codes.length!==staff.length)throw Error('Kode akses pegawai belum dibuat.');
+  if(!PropertiesService.getScriptProperties().getProperty('ADMIN_CODE_HASH'))throw Error('Kode admin belum dibuat.');
+  Logger.log('SIAP: 74 pegawai, kode akses, dan kode admin telah dikonfigurasi.');
 }
