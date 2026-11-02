@@ -37,6 +37,7 @@ function recordSession(p,t,d){
   if(!/^[A-Za-z0-9_-]{11}$/.test(video))throw Error('ID video tidak valid.');
   const title=String(d.videoTitle||'Video senam').slice(0,100).replace(/^[=+@-]/,"'");
   tab('Aktivitas').appendRow([Utilities.getUuid(),t.iso,t.date,t.time,ses,p.id,p.name,p.profesi,video,title,'YA',10,d.motion==='active'?'PERKIRAAN':'TANPA KAMERA','KONFIRMASI MANDIRI']);
+  refreshRankingSheet(t);
   return {already:false,points:10};
 }
 function buildStats(p,t,admin){
@@ -61,6 +62,26 @@ function buildStats(p,t,admin){
   const out={todayLogins:new Set(logins.map(r=>String(r[4]))).size,todayParticipants:new Set(current.map(r=>String(r[5]))).size,week,month,leaderboard,my:{today:byPerson[p.id]?.today||0,week:byPerson[p.id]?.week||0,month:byPerson[p.id]?.month||0},totalEmployees:persons.length};
   if(admin)out.adminLogins=logins.map(r=>({name:String(r[5]),profesi:String(r[6]),at:String(r[3])})).slice(-100);
   return out;
+}
+function refreshRankingSheet(t){
+  const people=asRows('Pegawai').filter(r=>r[4]==='YA'&&String(r[3]||'').trim());
+  const activities=asRows('Aktivitas').filter(r=>r[10]==='YA');
+  const scores={};
+  activities.forEach(r=>{
+    const id=String(r[5]),date=String(r[2]),session=String(r[4]);
+    if(!scores[id])scores[id]={week:0,month:0,sessions:0,keys:new Set()};
+    const item=scores[id],key=date+'|'+session;
+    if(item.keys.has(key))return;
+    item.keys.add(key);
+    if(date.startsWith(t.month)){item.month+=10;item.sessions++;}
+    const wd=new Date(date+'T12:00:00+08:00');
+    if(Utilities.formatDate(wd,TZ,'YYYY-ww')===t.week)item.week+=10;
+  });
+  const records=people.map(p=>[String(p[0]),String(p[3]),t.week,scores[String(p[0])]?.week||0,t.month,scores[String(p[0])]?.month||0,scores[String(p[0])]?.sessions||0])
+    .filter(row=>row[3]||row[5]).sort((a,b)=>b[5]-a[5]||b[3]-a[3]);
+  const sh=tab('Peringkat');sh.clearContents();
+  sh.getRange(1,1,1,7).setValues([['ID Pegawai','Nama Tampilan','Minggu WITA','Poin Mingguan','Bulan WITA','Poin Bulanan','Sesi Bulan Ini']]);
+  if(records.length)sh.getRange(2,1,records.length,7).setValues(records);
 }
 function doPost(e){
   try{
