@@ -8,11 +8,11 @@
   <title>K3 Active Break | Puskesmas Ile Bura</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="style.css?v=portal-v3">
+  <link rel="stylesheet" href="style.css?v=bersama-v1">
   <script defer src="backend-config.js?v=worker-connected-v1"></script>
   <script defer src="heroes.js?v=portal-v3"></script>
   <script defer src="motion.js?v=smart-motion-v1"></script>
-  <script src="app.js?v=portal-v2" defer></script>
+  <script src="app.js?v=bersama-v1" defer></script>
 </head>
 <body>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -32,17 +32,20 @@
   <main class="container">
     <section id="login-screen" class="login-shell k3-hero-layout">
       <div class="login-intro">
-        <img
-          class="k3-hero-image"
-          src="assets/hero-k3-1280.webp"
-          srcset="assets/hero-k3-720.webp 720w,
-                  assets/hero-k3-1280.webp 1280w"
-          sizes="(max-width: 780px) 100vw, 1120px"
-          decoding="async"
-          fetchpriority="high"
-          alt="K3 Active Break UPTD Puskesmas Ile Bura"
-          loading="eager"
-        >
+        <div class="k3-hero-image-wrap">
+          <picture class="k3-hero-picture">
+            <source srcset="assets/hero-k3-bersama.avif" type="image/avif">
+            <img
+              class="k3-hero-image"
+              src="assets/hero-k3-1280.webp"
+              decoding="async"
+              fetchpriority="high"
+              alt="K3 ACTIVE BREAK UPTD PUSKESMAS ILE BURA, foto bersama pegawai Puskesmas Ile Bura, logo kesehatan, GERMAS, semboyan Sehat Bersama Aktif Berkarya, dan jadwal 09.00, 11.00, serta 13.00 WITA."
+              loading="eager"
+            >
+          </picture>
+          <span class="k3-hero-live-clock" id="hero-wita-clock" aria-label="Waktu Indonesia Tengah saat ini">--:-- WITA</span>
+        </div>
       </div>
       <div class="login-card k3-entry-card">
         <div class="entry-heading">
