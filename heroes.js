@@ -19,8 +19,8 @@
    unique.add(r.date+'|'+r.session);
   }
   let week=0,month=0,today=0;
-  const dt=new Date(date+'T12:00:00+08:00');
-  const weekStart=new Date(dt);weekStart.setDate(dt.getDate()-((dt.getDay()+6)%7));
+  const dt=new Date(date+'T00:00:00Z');
+  const weekStart=new Date(dt);weekStart.setUTCDate(dt.getUTCDate()-((dt.getUTCDay()+6)%7));
   for(const entry of unique){
    const [d,session]=entry.split('|');
    if(d===date)today++;
