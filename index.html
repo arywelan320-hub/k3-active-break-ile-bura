@@ -8,11 +8,11 @@
   <title>K3 Active Break | Puskesmas Ile Bura</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="style.css?v=portal-v1">
+  <link rel="stylesheet" href="style.css?v=portal-v2">
   <script defer src="backend-config.js?v=portal-v1"></script>
-  <script defer src="heroes.js?v=portal-v1"></script>
+  <script defer src="heroes.js?v=portal-v2"></script>
   <script defer src="motion.js?v=smart-motion-v1"></script>
-  <script src="app.js?v=portal-v1" defer></script>
+  <script src="app.js?v=portal-v2" defer></script>
 </head>
 <body>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -134,6 +134,16 @@
             <button type="button" class="primary small" id="heroes-connect-btn">Hubungkan ke Google Sheets</button>
           </div>
           <button type="button" class="outline small" id="heroes-refresh-btn">Perbarui Peringkat</button>
+        </div>
+        <div class="heroes-sync-box">
+          <h3>Nama pada papan peringkat</h3>
+          <p class="tiny">Pilihan sukarela. Hanya alias yang disetujui akan tampil kepada pegawai lain, bukan nama lengkap.</p>
+          <label for="heroes-alias">Alias yang ingin ditampilkan</label>
+          <input id="heroes-alias" type="text" maxlength="26" placeholder="Contoh: Helun K3">
+          <div class="heroes-mini-actions">
+            <button class="primary small" type="button" id="heroes-consent-btn">Setuju tampilkan alias</button>
+            <button class="outline small" type="button" id="heroes-withdraw-btn">Tarik persetujuan</button>
+          </div>
         </div>
         <h3 class="heroes-section-title">Pahlawan K3 Bulan Ini</h3>
         <div id="heroes-podium" class="heroes-podium"></div>
