@@ -198,7 +198,8 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     const remaining=SCHEDULE.find(x=>x.time>=time);
     text('next-time',remaining?.time??'Selesai');
     text('next-title',remaining?.title??'Jadwal hari ini telah selesai');
-    text('today-count',state.history.filter(x=>x.userId===state.userId&&x.date===date).length);
+    const todaySessions=new Set(state.history.filter(x=>x.userId===state.userId&&x.date===date&&x.participated===true&&SCHEDULE.some(s=>s.time===x.session)).map(x=>x.session));
+    text('today-count',todaySessions.size);
   }
 
   function getMainVideo(session){
