@@ -8,9 +8,11 @@
   <title>K3 Active Break | Puskesmas Ile Bura</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="style.css?v=smart-motion-v1">
+  <link rel="stylesheet" href="style.css?v=portal-v1">
+  <script defer src="backend-config.js?v=portal-v1"></script>
+  <script defer src="heroes.js?v=portal-v1"></script>
   <script defer src="motion.js?v=smart-motion-v1"></script>
-  <script src="app.js?v=smart-motion-v1" defer></script>
+  <script src="app.js?v=portal-v1" defer></script>
 </head>
 <body>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -83,6 +85,7 @@
         <div class="section-head"><div><span class="eyebrow">JADWAL K3 ACTIVE BREAK</span><h2>Tiga waktu bergerak</h2><p>Pilih video utama atau buka alternatif. Video tidak diputar otomatis.</p></div><span class="muted">WITA</span></div>
         <div id="schedule-list" class="session-grid"></div>
         <p class="footnote">Kegiatan bersifat sukarela. Jika sedang melayani pasien atau merasa tidak nyaman, sesi dapat dilewati. Catatan selesai merupakan konfirmasi mandiri, bukan absensi resmi.</p>
+        <div id="heroes-home" class="heroes-mini-card" aria-label="K3 Active Heroes"></div>
       </section>
 
       <section id="page-video" class="app-page hidden">
@@ -110,6 +113,55 @@
         </div>
       </section>
 
+      <section id="page-heroes" class="app-page hidden">
+        <div class="heroes-heading">
+          <span class="eyebrow">KEBUGARAN PEGAWAI</span>
+          <h2>🏆 K3 Active Heroes</h2>
+          <p>Peringkat berdasarkan partisipasi mandiri. Tidak digunakan sebagai penilaian kinerja resmi.</p>
+        </div>
+        <div class="hero-self-summary">
+          <div><span>Sesi hari ini</span><strong id="hero-my-today">0 dari 3 sesi</strong></div>
+          <div><span>Poin minggu ini</span><strong id="hero-my-week">0 poin</strong></div>
+          <div><span>Poin bulan ini</span><strong id="hero-my-month">0 poin</strong></div>
+        </div>
+        <div class="heroes-sync-box">
+          <strong id="heroes-sync-label">Catatan perangkat ini saja</strong>
+          <p id="heroes-status" role="status">Menunggu integrasi pusat.</p>
+          <p id="heroes-connection-note">Papan peringkat bersama belum aktif. Admin perlu menerbitkan penghubung Google Sheets. Jangan menganggap angka lokal sebagai peringkat seluruh pegawai.</p>
+          <div id="heroes-access-wrap" class="heroes-access">
+            <label for="heroes-access-input">Kode akses pribadi dari pengelola</label>
+            <input type="password" id="heroes-access-input" autocomplete="off" placeholder="Kode akses pegawai">
+            <button type="button" class="primary small" id="heroes-connect-btn">Hubungkan ke Google Sheets</button>
+          </div>
+          <button type="button" class="outline small" id="heroes-refresh-btn">Perbarui Peringkat</button>
+        </div>
+        <h3 class="heroes-section-title">Pahlawan K3 Bulan Ini</h3>
+        <div id="heroes-podium" class="heroes-podium"></div>
+        <div id="heroes-leaderboard" class="heroes-leaderboard"></div>
+        <p class="footnote">Papan peringkat hanya menampilkan alias pegawai yang bersedia. Senam dengan kamera bersifat sukarela, tanpa bonus poin khusus.</p>
+      </section>
+      <section id="page-monitoring" class="app-page hidden">
+        <div class="heroes-heading">
+          <span class="eyebrow">MONITORING K3</span>
+          <h2>Monitoring Partisipasi</h2>
+          <p id="monitor-connection">Data pusat belum tersedia.</p>
+        </div>
+        <div class="hero-self-summary">
+          <div><span>Masuk aplikasi hari ini</span><strong id="monitor-today-login">—</strong></div>
+          <div><span>Pegawai mengonfirmasi senam</span><strong id="monitor-today-active">—</strong></div>
+        </div>
+        <button class="outline small" id="monitor-refresh-btn" type="button">Perbarui Data</button>
+        <div class="heroes-sync-box">
+          <h3>Daftar login untuk admin</h3>
+          <p class="tiny">Nama lengkap dan jam masuk hanya muncul setelah kode pegawai dan kode admin diverifikasi di server.</p>
+          <label for="heroes-admin-input">Kode admin rahasia</label>
+          <input id="heroes-admin-input" type="password" autocomplete="off" placeholder="Masukkan kode admin">
+          <button class="primary small" id="monitor-admin-btn" type="button">Tampilkan Monitoring Admin</button>
+          <div id="monitor-admin-output" class="monitor-admin-output" role="status">Belum ada data admin yang dibuka.</div>
+        </div>
+        <p class="footnote">Masuk aplikasi tidak berarti pegawai masih online. Konfirmasi senam bukan bukti gerakan atau kehadiran kerja.</p>
+      </section>
+
       <section id="page-riwayat" class="app-page hidden">
         <div class="section-head heading-large"><div><span class="eyebrow">CATATAN PRIBADI</span><h2>Riwayat aktivitas</h2><p>Catatan berasal dari konfirmasi Anda sendiri dan belum dianggap absensi resmi.</p></div><button id="export-csv" class="outline">Ekspor CSV</button></div>
         <div class="metric-grid two"><article class="metric-card light"><span class="mini-label">TOTAL KONFIRMASI</span><strong id="history-total">0</strong><span>Di perangkat ini</span></article><article class="metric-card light"><span class="mini-label">HARI AKTIF</span><strong id="history-days">0</strong><span>Hari berbeda</span></article></div>
@@ -130,6 +182,7 @@
       <nav class="bottom-nav" aria-label="Menu aplikasi">
         <button class="nav-item active" data-go="beranda"><span>⌂</span>Beranda</button>
         <button class="nav-item" data-go="video"><span>▷</span>Video</button>
+        <button class="nav-item" data-go="heroes"><span>🏆</span>Heroes</button>
         <button class="nav-item" data-go="riwayat"><span>▤</span>Riwayat</button>
         <button class="nav-item" data-go="pengaturan"><span>⚙</span>Pengaturan</button>
       </nav>
