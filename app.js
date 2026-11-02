@@ -530,7 +530,7 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   }
   $('profession').addEventListener('change',updateEmployeeOptions);
   $('employee').addEventListener('change',()=>{$('login-btn').disabled=!$('employee').value;});
-  $('login-btn').addEventListener('click',()=>{const id=$('employee').value;if(!getEmployees().some(x=>x.id===id))return;state.userId=id;save();showApp();window.K3Heroes?.recordLogin();});
+  $('login-btn').addEventListener('click',()=>{const id=$('employee').value;if(!getEmployees().some(x=>x.id===id))return;state.userId=id;save();showApp();});
   $('change-user').addEventListener('click',()=>{window.K3Motion?.stop();state.userId=null;save();showApp();});
 
   document.addEventListener('click',e=>{
