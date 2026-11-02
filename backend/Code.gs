@@ -87,7 +87,7 @@ function doPost(e){
   try{
     if(!e||!e.postData||String(e.postData.contents||'').length>5000)return fail('Permintaan tidak valid.');
     const d=JSON.parse(e.postData.contents), action=String(d.action||'');
-    if(!['login','session','snapshot','adminSnapshot'].includes(action))return fail('Aksi tidak diizinkan.');
+    if(!['login','session','snapshot','adminSnapshot','consent'].includes(action))return fail('Aksi tidak diizinkan.');
     const lock=LockService.getScriptLock();lock.waitLock(15000);
     try{
       const p=employeeFor(String(d.employeeId||''),String(d.code||''));
@@ -95,6 +95,20 @@ function doPost(e){
       if(action==='login'){registerLogin(p,t);return ok({message:'Masuk tercatat',stats:buildStats(p,t,false)})}
       if(action==='session'){const recorded=recordSession(p,t,d);return ok({recorded,stats:buildStats(p,t,false)})}
       if(action==='snapshot'){return ok({stats:buildStats(p,t,false)})}
+      if(action==='consent'){
+        const sheet=tab('Pegawai'),rows=asRows('Pegawai');
+        const index=rows.findIndex(r=>String(r[0])===p.id);
+        if(index<0)throw Error('Pegawai tidak ditemukan.');
+        if(d.approve===true){
+          const alias=String(d.alias||'').trim();
+          if(alias.length<3||alias.length>26||!/^[\\p{L}\\p{N} .'-]+$/u.test(alias))throw Error('Alias harus 3-26 karakter dan tanpa simbol khusus.');
+          sheet.getRange(index+2,4,1,2).setValues([[alias,'YA']]);
+        }else{
+          sheet.getRange(index+2,4,1,2).setValues([['','TIDAK']]);
+        }
+        refreshRankingSheet(t);
+        return ok({stats:buildStats(p,t,false)});
+      }
       if(action==='adminSnapshot'){
         if(!adminAllowed(d.adminCode))throw Error('Akses admin ditolak.');
         return ok({stats:buildStats(p,t,true)});
