@@ -374,3 +374,8 @@
 .hero-rank-row b{white-space:nowrap}
 .monitor-admin-output{margin-top:15px;font-size:13px;overflow-wrap:anywhere}
 @media(max-width:600px){.hero-self-summary{padding:13px 7px}.hero-self-summary span{font-size:11px}.hero-self-summary strong{font-size:15px}.heroes-podium{gap:6px;padding:9px}.hero-podium-person{min-height:120px;padding:10px 4px}.hero-podium-person strong{font-size:12px}.hero-medal{font-size:27px}.nav-item{min-width:0}.nav-item span{font-size:19px}}
+
+/* Pemilih periode papan peringkat K3 Active Heroes */
+.heroes-rank-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:18px}
+.heroes-rank-tabs{display:flex;gap:7px}
+.heroes-rank-tabs .chip{font-size:12px;min-height:38px}
