@@ -379,3 +379,16 @@
 .heroes-rank-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:18px}
 .heroes-rank-tabs{display:flex;gap:7px}
 .heroes-rank-tabs .chip{font-size:12px;min-height:38px}
+
+/* Beranda awal dengan artwork foto bersama asli yang telah disetujui. */
+body:has(#login-screen:not(.hidden)) .site-header{display:none}
+.k3-hero-layout .login-intro{max-width:1000px;width:100%}
+.k3-hero-image-wrap{position:relative;width:100%;margin:auto}
+.k3-hero-picture{display:block;width:100%}
+.k3-hero-image-wrap .k3-hero-image{width:100%;height:auto;display:block;border-radius:20px;object-fit:contain;box-shadow:0 14px 35px rgba(15,79,78,.09)}
+.k3-hero-live-clock{position:absolute;top:2.6%;right:5.7%;width:15.3%;height:4.85%;display:grid;place-items:center;border-radius:999px;background:#e1f6ef;color:#0b575b;font-size:clamp(8px,1.5vw,17px);font-weight:800;line-height:1;white-space:nowrap;pointer-events:none}
+@media(max-width:600px){
+ .login-shell.k3-hero-layout{padding-top:8px}
+ .k3-hero-image-wrap .k3-hero-image{border-radius:12px}
+ .k3-hero-live-clock{font-size:clamp(7px,1.85vw,10px)}
+}
