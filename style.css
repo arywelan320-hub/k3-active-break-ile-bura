@@ -335,3 +335,42 @@
 .motion-camera-panel .tiny{margin-top:5px}
 .motion-reward-report{border-radius:12px;background:#f1f8f7;color:#275e57;font-size:12px;padding:12px;margin:12px 0}
 @media(max-width:440px){.motion-choice-dialog{padding:18px}.motion-choice-card{padding:13px}.motion-camera-head{flex-wrap:wrap}}
+
+/* K3 Active Heroes & Monitoring. Sumber data jelas: lokal vs server. */
+.heroes-mini-card,.heroes-sync-box,.heroes-podium,.hero-self-summary{background:#fff;border:1px solid var(--line);border-radius:19px}
+.heroes-mini-card{padding:19px;margin:27px 0 0}
+.heroes-mini-head{display:flex;align-items:center;gap:12px}
+.heroes-mini-head>div{display:grid;gap:2px}
+.heroes-mini-head small,.heroes-mini-numbers small{color:var(--muted);font-size:11px}
+.heroes-mini-icon{font-size:34px}
+.heroes-mini-numbers{display:flex;gap:28px;margin:14px 0}
+.heroes-mini-numbers span{display:grid;gap:1px}
+.heroes-mini-numbers strong{font-size:24px}
+.heroes-mini-actions{display:flex;gap:9px;flex-wrap:wrap}
+.heroes-heading{margin:24px 0 18px}
+.heroes-heading h2{font-size:clamp(27px,4vw,38px);margin:7px 0}
+.heroes-heading p{color:var(--muted);font-size:14px}
+.hero-self-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:18px;margin:12px 0 19px}
+.hero-self-summary>div{display:grid;gap:8px;text-align:center}
+.hero-self-summary>div+div{border-left:1px solid var(--line)}
+.hero-self-summary span{font-size:12px;color:var(--muted)}
+.hero-self-summary strong{font-size:clamp(16px,2vw,22px)}
+.heroes-sync-box{padding:19px;margin-bottom:22px}
+.heroes-sync-box>p{font-size:13px;color:var(--muted)}
+.heroes-sync-box label{display:block;font-size:12px;font-weight:700;margin:12px 0 6px}
+.heroes-sync-box input{display:block;max-width:360px;margin-bottom:10px}
+.heroes-access{margin:12px 0}
+.heroes-section-title{font-size:21px;margin:25px 0 14px}
+.heroes-podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:14px}
+.heroes-podium:has(.empty-state){grid-template-columns:1fr}
+.hero-podium-person{min-height:150px;background:#f5faf8;border:1px solid #e0ece8;border-radius:16px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;gap:8px;overflow-wrap:anywhere}
+.hero-podium-person.hero-champion{background:#fff8df;border-color:#f0db9b}
+.hero-medal{font-size:37px}
+.hero-podium-person strong{font-size:16px}
+.hero-podium-person small{font-size:12px;color:var(--muted)}
+.heroes-leaderboard{margin-top:12px}
+.hero-rank-row{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:14px 15px;border:1px solid var(--line);background:#fff;border-radius:13px;margin:8px 0;font-size:13px}
+.hero-rank-row span{flex:1}
+.hero-rank-row b{white-space:nowrap}
+.monitor-admin-output{margin-top:15px;font-size:13px;overflow-wrap:anywhere}
+@media(max-width:600px){.hero-self-summary{padding:13px 7px}.hero-self-summary span{font-size:11px}.hero-self-summary strong{font-size:15px}.heroes-podium{gap:6px;padding:9px}.hero-podium-person{min-height:120px;padding:10px 4px}.hero-podium-person strong{font-size:12px}.hero-medal{font-size:27px}.nav-item{min-width:0}.nav-item span{font-size:19px}}
