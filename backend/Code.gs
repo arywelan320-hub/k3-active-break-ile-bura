@@ -58,7 +58,7 @@ function buildStats(p,t,admin){
     if(date===t.date)k.today+=1;
   });
   const persons=asRows('Pegawai').map(r=>({id:String(r[0]),name:String(r[1]),alias:String(r[3]||'').trim(),consent:r[4]==='YA'}));
-  const leaderboard=persons.filter(x=>x.consent&&x.alias).map(x=>({alias:x.alias,week:byPerson[x.id]?.week||0,month:byPerson[x.id]?.month||0})).filter(x=>x.week||x.month).sort((a,b)=>b.month-a.month||b.week-a.week||a.alias.localeCompare(b.alias)).slice(0,15);
+  const leaderboard=persons.filter(x=>x.consent&&x.alias).map(x=>({alias:x.alias,week:byPerson[x.id]?.week||0,month:byPerson[x.id]?.month||0})).filter(x=>x.week||x.month).sort((a,b)=>b.month-a.month||b.week-a.week||a.alias.localeCompare(b.alias));
   const out={todayLogins:new Set(logins.map(r=>String(r[4]))).size,todayParticipants:new Set(current.map(r=>String(r[5]))).size,week,month,leaderboard,my:{today:byPerson[p.id]?.today||0,week:byPerson[p.id]?.week||0,month:byPerson[p.id]?.month||0},totalEmployees:persons.length};
   if(admin)out.adminLogins=logins.map(r=>({name:String(r[5]),profesi:String(r[6]),at:String(r[3])})).slice(-100);
   return out;
