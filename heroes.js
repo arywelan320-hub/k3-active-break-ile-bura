@@ -4,7 +4,7 @@
  const $=id=>document.getElementById(id);
  const SESSIONS=['09:00','11:00','13:00'];
  const STORE='k3_ile_bura_v1';
- let person=null,remote=null,connected=false,pending=false;
+ let person=null,remote=null,connected=false,pending=false,rankingPeriod='month';
  const endpoint=()=>String(window.K3_BACKEND_URL||'').trim();
  const codeKey=id=>'k3_access_code_'+id;
  const accessCode=()=>person?sessionStorage.getItem(codeKey(person.id))||'':'';
@@ -52,7 +52,13 @@
   $('hero-my-month').textContent=points.month+' poin';
   $('hero-my-today').textContent=points.today+' dari 3 sesi';
   $('heroes-sync-label').textContent=label;
-  const items=stats?.leaderboard||[];
+  const items=(stats?.leaderboard||[]).slice().sort((a,b)=>(Number(b[rankingPeriod]||0)-Number(a[rankingPeriod]||0))||(Number(b.month||0)-Number(a.month||0))||String(a.alias).localeCompare(String(b.alias)));
+  document.querySelectorAll('[data-hero-period]').forEach(b=>{
+    const selected=b.dataset.heroPeriod===rankingPeriod;
+    b.classList.toggle('active',selected);
+    b.setAttribute('aria-pressed',String(selected));
+  });
+  $('hero-period-label').textContent=rankingPeriod==='week'?'Peringkat Mingguan':'Peringkat Bulanan';
   const top=$('heroes-podium'),list=$('heroes-leaderboard');
   if(!items.length){
    top.innerHTML='<div class="empty-state">Belum ada peringkat bersama. Nama hanya tampil setelah pegawai memberikan persetujuan dan ada data yang tersinkron.</div>';
@@ -133,6 +139,9 @@
   $('heroes-consent-btn').addEventListener('click',()=>sendConsent(true));
   $('heroes-withdraw-btn').addEventListener('click',()=>sendConsent(false));
   $('heroes-access-input').addEventListener('keydown',e=>{if(e.key==='Enter')verifyCode()});
+  document.querySelectorAll('[data-hero-period]').forEach(b=>b.addEventListener('click',()=>{
+    rankingPeriod=b.dataset.heroPeriod;render();
+  }));
  });
  window.K3Heroes={
   setUser(user){
