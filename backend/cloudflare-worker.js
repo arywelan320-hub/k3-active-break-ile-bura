@@ -16,7 +16,7 @@ export default {
    const body=await request.text();
    if(body.length>5000)throw Error('Payload terlalu besar');
    const parsed=JSON.parse(body);
-   if(!['login','session','snapshot','adminSnapshot'].includes(parsed.action))throw Error('Aksi tidak didukung');
+   if(!['login','session','snapshot','adminSnapshot','consent'].includes(parsed.action))throw Error('Aksi tidak didukung');
    const upstream=await fetch(env.APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(parsed),redirect:'follow'});
    const content=await upstream.text();
    const data=JSON.parse(content);
