@@ -184,7 +184,7 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     $('login-screen').classList.toggle('hidden',!!user);
     $('app-screen').classList.toggle('hidden',!user);
     $('change-user').classList.toggle('hidden',!user);
-    if (!user){window.K3Heroes?.setUser(null);loginOptions();return;}
+    if (!user){const {time}=localParts();text('hero-wita-clock',`${time} WITA`);window.K3Heroes?.setUser(null);loginOptions();return;}
     text('greeting-name',user.nama.split(' ')[0]);
     text('greeting-detail',`${user.profesi}${user.unit?' • '+user.unit:''} | Tetap utamakan pelayanan pasien.`);
     text('today-date',formatDate());
@@ -591,6 +591,6 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     localStorage.removeItem(STORAGE);state={...initial};alternativeType='pilihan';alternativePage=0;showApp();notify('Data lokal berhasil dihapus.');
   });
   showApp();
-  setInterval(()=>{if(getUser()){updateClock();renderSchedule();checkReminder();}else{const {time}=localParts();text('wita-clock',`${time} WITA`);}},20000);
+  setInterval(()=>{if(getUser()){updateClock();renderSchedule();checkReminder();}else{const {time}=localParts();text('wita-clock',`${time} WITA`);text('hero-wita-clock',`${time} WITA`);}},20000);
   if('serviceWorker' in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 })();
