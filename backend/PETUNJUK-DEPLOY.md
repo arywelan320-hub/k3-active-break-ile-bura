@@ -15,3 +15,15 @@ https://docs.google.com/spreadsheets/d/1zOQSTimUdUW2cLbfXRp5TGytsbXK9JLiaIL4E7nQ
 
 Catatan keamanan: izin kamera wajib, tidak ada unggahan foto. Data deteksi hanya ringkasan perkiraan.
 Google Sheets bukan sistem absensi resmi. Tombol Ya ikut bergerak merupakan pernyataan mandiri.
+
+## Cloudflare Worker melalui terminal Ubuntu
+```bash
+npx wrangler login
+npx wrangler deploy backend/cloudflare-worker.js --name k3-active-break-api
+npx wrangler secret put APPS_SCRIPT_URL --name k3-active-break-api
+```
+Saat diminta nilai secret, tempel URL Apps Script yang berakhiran `/exec`.
+Salin URL `https://k3-active-break-api.<subdomain>.workers.dev` yang diberikan Wrangler,
+lalu isi `window.K3_BACKEND_URL` pada `backend-config.js` dan push ke GitHub.
+
+Persetujuan papan peringkat sekarang tersedia di dalam aplikasi: pegawai memasukkan kode akses dan memilih alias. Kolom Pegawai D/E diperbarui oleh backend, bukan oleh browser secara langsung.
