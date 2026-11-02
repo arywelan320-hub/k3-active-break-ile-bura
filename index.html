@@ -8,9 +8,9 @@
   <title>K3 Active Break | Puskesmas Ile Bura</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="style.css?v=portal-v2">
+  <link rel="stylesheet" href="style.css?v=portal-v3">
   <script defer src="backend-config.js?v=portal-v1"></script>
-  <script defer src="heroes.js?v=portal-v2"></script>
+  <script defer src="heroes.js?v=portal-v3"></script>
   <script defer src="motion.js?v=smart-motion-v1"></script>
   <script src="app.js?v=portal-v2" defer></script>
 </head>
@@ -145,7 +145,7 @@
             <button class="outline small" type="button" id="heroes-withdraw-btn">Tarik persetujuan</button>
           </div>
         </div>
-        <h3 class="heroes-section-title">Pahlawan K3 Bulan Ini</h3>
+        <div class="heroes-rank-heading"><h3 class="heroes-section-title" id="hero-period-label">Peringkat Bulanan</h3><div class="heroes-rank-tabs" role="group" aria-label="Periode peringkat"><button class="chip" type="button" data-hero-period="week" aria-pressed="false">Mingguan</button><button class="chip active" type="button" data-hero-period="month" aria-pressed="true">Bulanan</button></div></div>
         <div id="heroes-podium" class="heroes-podium"></div>
         <div id="heroes-leaderboard" class="heroes-leaderboard"></div>
         <p class="footnote">Papan peringkat hanya menampilkan alias pegawai yang bersedia. Senam dengan kamera bersifat sukarela, tanpa bonus poin khusus.</p>
