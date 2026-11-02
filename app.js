@@ -184,13 +184,13 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     $('login-screen').classList.toggle('hidden',!!user);
     $('app-screen').classList.toggle('hidden',!user);
     $('change-user').classList.toggle('hidden',!user);
-    if (!user){loginOptions();return;}
+    if (!user){window.K3Heroes?.setUser(null);loginOptions();return;}
     text('greeting-name',user.nama.split(' ')[0]);
     text('greeting-detail',`${user.profesi}${user.unit?' • '+user.unit:''} | Tetap utamakan pelayanan pasien.`);
     text('today-date',formatDate());
     text('total-schedule',SCHEDULE.length);
     text('employee-count',`${getEmployees().length} pegawai ${state.employees.length?'hasil impor':'data kepegawaian 2026'} tersedia di perangkat ini.`);
-    renderVideos();renderSchedule();renderHistory();updateClock();navigate(location.hash.slice(1)||'beranda');
+    renderVideos();renderSchedule();renderHistory();updateClock();window.K3Heroes?.setUser(user);navigate(location.hash.slice(1)||'beranda');
   }
   function updateClock(){
     const {date,time}=localParts();
@@ -273,13 +273,14 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   }
 
   function navigate(page){
-    if(!['beranda','video','alternatif','riwayat','pengaturan'].includes(page))page='beranda';
+    if(!['beranda','video','alternatif','heroes','monitoring','riwayat','pengaturan'].includes(page))page='beranda';
     document.querySelectorAll('.app-page').forEach(el=>el.classList.toggle('hidden',el.id!=='page-'+page));
     const selectedNav=page==='alternatif'?'video':page;
     document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.go===selectedNav));
     if(page==='riwayat')renderHistory();
     if(page==='alternatif')renderAlternatives();
     if(page==='pengaturan')updateQr();
+    if(page==='heroes'||page==='monitoring')window.K3Heroes?.refresh();
     window.scrollTo({top:0,behavior:'instant'});
   }
   // Pemutar YouTube berada di dalam dialog aplikasi. Gunakan pemutar standar
@@ -425,8 +426,10 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
     const {date,time}=localParts(),session=getSession();
     const duplicate=state.history.some(x=>x.userId===state.userId&&x.date===date&&x.session===session&&x.participated===true);
     if(participated&&!duplicate){
-      state.history.push({userId:state.userId,employeeName:user.nama,profession:user.profesi,unit:user.unit,date,time,session,participated:true,points:10,videoId:v.id,videoTitle:v.title,at:new Date().toISOString()});
+      const record={userId:state.userId,employeeName:user.nama,profession:user.profesi,unit:user.unit,date,time,session,participated:true,points:10,videoId:v.id,videoTitle:v.title,motion:motionUsed===true&&!!lastMotionReport?.samples,at:new Date().toISOString()};
+      state.history.push(record);
       save();
+      window.K3Heroes?.onActivity(record);
     }
     $('reward-dialog').close();
     $('reward-confetti').replaceChildren();
@@ -526,7 +529,7 @@ Dokter Gigi|Agustina Oartansia Tita Riberu`.split('\n').map((line,i)=>{
   }
   $('profession').addEventListener('change',updateEmployeeOptions);
   $('employee').addEventListener('change',()=>{$('login-btn').disabled=!$('employee').value;});
-  $('login-btn').addEventListener('click',()=>{const id=$('employee').value;if(!getEmployees().some(x=>x.id===id))return;state.userId=id;save();showApp();});
+  $('login-btn').addEventListener('click',()=>{const id=$('employee').value;if(!getEmployees().some(x=>x.id===id))return;state.userId=id;save();showApp();window.K3Heroes?.recordLogin();});
   $('change-user').addEventListener('click',()=>{window.K3Motion?.stop();state.userId=null;save();showApp();});
 
   document.addEventListener('click',e=>{
