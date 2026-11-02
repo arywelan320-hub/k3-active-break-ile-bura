@@ -104,6 +104,16 @@
   }catch(err){setStatus('Aktivitas tersimpan lokal, tetapi belum berhasil dikirim ke server: '+err.message)}
   render();
  }
+ async function sendConsent(approve){
+  if(!connected){setStatus('Hubungkan kode pegawai sebelum mengatur nama peringkat.');return}
+  const alias=$('heroes-alias').value.trim();
+  try{
+   const data=await request('consent',{approve,alias:approve?alias:''});
+   remote=data;connected=true;setStatus(approve?'Alias peringkat berhasil diaktifkan.':'Alias berhasil dihapus dari peringkat.');
+   $('heroes-alias').value='';
+  }catch(e){setStatus(e.message)}
+  render();
+ }
  async function adminSnapshot(){
   const adminCode=$('heroes-admin-input').value.trim();
   if(!adminCode){$('monitor-admin-output').textContent='Masukkan kode admin terlebih dahulu.';return}
@@ -120,6 +130,8 @@
   $('heroes-refresh-btn').addEventListener('click',update);
   $('monitor-refresh-btn').addEventListener('click',update);
   $('monitor-admin-btn').addEventListener('click',adminSnapshot);
+  $('heroes-consent-btn').addEventListener('click',()=>sendConsent(true));
+  $('heroes-withdraw-btn').addEventListener('click',()=>sendConsent(false));
   $('heroes-access-input').addEventListener('keydown',e=>{if(e.key==='Enter')verifyCode()});
  });
  window.K3Heroes={
@@ -128,13 +140,13 @@
    person=user;
    if(!person)return;
    render();
-   if(endpoint()&&accessCode())update();
+   if(endpoint()&&accessCode())window.K3Heroes.recordLogin();
   },
   refresh:render,
   onActivity,
   update,
   recordLogin(){
-   if(endpoint()&&accessCode()&&person)request('login').then(d=>{remote=d;connected=true;render()}).catch(()=>{});
+   if(endpoint()&&accessCode()&&person)request('login').then(d=>{remote=d;connected=true;render()}).catch(()=>{connected=false;render()});
   }
  };
 })();
